@@ -11,6 +11,10 @@ public class Player : MonoBehaviour
     private float _xLimit = 10f;
     private float _yLimit = 5.5f;
 
+    //prefab for laser
+    [SerializeField]
+    private GameObject _laser;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -23,6 +27,12 @@ public class Player : MonoBehaviour
     {
         MovePlayer();
         LimitSpace();
+
+        //Instantiate laser prefab with spacebar
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            Instantiate(_laser, transform.position + new Vector3(0,0.8f,0), Quaternion.identity);
+        }
     }
 
     void MovePlayer()
