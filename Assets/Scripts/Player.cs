@@ -5,7 +5,13 @@ using UnityEngine;
 public class Player : MonoBehaviour
 {
     // Speed of the player
+    [SerializeField]
     private float _speed = 5f;
+
+    //Fire properties
+    [SerializeField]
+    private float _fireDelay = 0.2f;
+    private float _canShoot = -1f;
 
     //bounds of field
     private float _xLimit = 10f;
@@ -28,10 +34,10 @@ public class Player : MonoBehaviour
         MovePlayer();
         LimitSpace();
 
-        //Instantiate laser prefab with spacebar
-        if (Input.GetKeyDown(KeyCode.Space))
+        //Instantiate laser prefab with spacebar if not in cool down
+        if (Input.GetKeyDown(KeyCode.Space) && Time.time > _canShoot)
         {
-            Instantiate(_laser, transform.position + new Vector3(0,0.8f,0), Quaternion.identity);
+            ShootLaser();
         }
     }
 
@@ -63,5 +69,12 @@ public class Player : MonoBehaviour
 
         // Stop on limits
         //transform.position = new Vector3(Mathf.Clamp(transform.position.x, -_xLimit, _xLimit), Mathf.Clamp(transform.position.y, -_yLimit, _yLimit), 0);
+    }
+
+    void ShootLaser()
+    {
+        //Update delay time for laser
+        _canShoot = Time.time + _fireDelay;
+        Instantiate(_laser, transform.position + new Vector3(0, 0.8f, 0), Quaternion.identity);
     }
 }
