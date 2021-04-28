@@ -4,9 +4,11 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
-    // Speed of the player
+    // Properties of the player
     [SerializeField]
     private float _speed = 5f;
+    [SerializeField]
+    private int _lives = 3;
 
     //Fire properties
     [SerializeField]
@@ -76,5 +78,15 @@ public class Player : MonoBehaviour
         //Update delay time for laser
         _canShoot = Time.time + _fireDelay;
         Instantiate(_laser, transform.position + new Vector3(0, 0.8f, 0), Quaternion.identity);
+    }
+
+    public void GetDamage()
+    {
+        _lives--;
+
+        if(_lives < 1)
+        {
+            Destroy(gameObject);
+        }
     }
 }

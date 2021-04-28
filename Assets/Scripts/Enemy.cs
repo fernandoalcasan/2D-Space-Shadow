@@ -8,6 +8,7 @@ public class Enemy : MonoBehaviour
     [SerializeField]
     private float _speed = 4f;
 
+    //Upper and inferior space limit
     private float _yLimit = 6f;
 
     // Start is called before the first frame update
@@ -42,7 +43,11 @@ public class Enemy : MonoBehaviour
         //Collition with player
         if (other.tag == "Player")
         {
-            //Here goes the damage to player's life
+            Player player = other.transform.GetComponent<Player>();
+            if (player)
+            {
+                player.GetDamage();
+            }
             Destroy(gameObject);
         }
         //Collition with Laser
