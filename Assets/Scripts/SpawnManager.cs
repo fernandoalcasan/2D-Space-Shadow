@@ -9,27 +9,29 @@ public class SpawnManager : MonoBehaviour
     private GameObject _enemy;
 
     [SerializeField]
-    private float _spawnDelay = 2f;
-    private float _canSpawn = -1f;
+    private GameObject _enemyContainer;
 
     // Start is called before the first frame update
     void Start()
     {
-        
+        StartCoroutine(SpawnEnemies());
     }
 
     // Update is called once per frame
     void Update()
     {
-        if(Time.time > _canSpawn)
+
+    }
+
+    IEnumerator SpawnEnemies()
+    {
+        while (true)
         {
-            SpawnEnemy();
+            Vector3 xPosToSpawn = new Vector3(Random.Range(-10f, 10f), 6, 0);
+            GameObject newEnemy = Instantiate(_enemy, xPosToSpawn, Quaternion.identity);
+            newEnemy.transform.parent = _enemyContainer.transform;
+            yield return new WaitForSeconds(2f);
         }
     }
 
-    void SpawnEnemy()
-    {
-        _canSpawn = Time.time + _spawnDelay;
-        GameObject newEnemy = Instantiate(_enemy, Vector3.zero, Quaternion.identity);
-    }
 }
