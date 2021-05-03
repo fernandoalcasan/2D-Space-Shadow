@@ -36,7 +36,7 @@ public class Enemy : MonoBehaviour
         transform.position = new Vector3(randX, _yLimit, 0);
     }
 
-    void OnTriggerEnter(Collider other)
+    void OnTriggerEnter2D(Collider2D other)
     {
         //Debug.Log("Collided with: " + other.transform.name);
 
@@ -44,7 +44,7 @@ public class Enemy : MonoBehaviour
         if (other.tag == "Player")
         {
             Player player = other.transform.GetComponent<Player>();
-            if (player)
+            if (!(player is null))
             {
                 player.GetDamage();
             }
