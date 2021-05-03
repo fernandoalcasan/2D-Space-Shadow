@@ -23,11 +23,20 @@ public class Player : MonoBehaviour
     [SerializeField]
     private GameObject _laser;
 
+    //spawn manager connection
+    private SpawnManager _spawnManager;
+
     // Start is called before the first frame update
     void Start()
     {
         // Set the player position = 0
         transform.position = new Vector3(0, 0, 0);
+        _spawnManager = GameObject.Find("Spawn_Manager").GetComponent<SpawnManager>();
+
+        if(_spawnManager is null)
+        {
+            Debug.LogError("The spawn manager is NULL");
+        }
     }
 
     // Update is called once per frame
@@ -86,6 +95,10 @@ public class Player : MonoBehaviour
 
         if(_lives < 1)
         {
+            if(!(_spawnManager is null))
+            {
+                _spawnManager.OnPlayerDeath();
+            }
             Destroy(gameObject);
         }
     }
