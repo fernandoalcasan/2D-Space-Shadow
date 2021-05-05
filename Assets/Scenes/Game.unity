@@ -281,6 +281,63 @@ Transform:
   m_Father: {fileID: 128208967}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1001 &800175247
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 1340898760200368274, guid: c53b83258631b5b4ab7568d81d16b076, type: 3}
+      propertyPath: m_RootOrder
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 1340898760200368274, guid: c53b83258631b5b4ab7568d81d16b076, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1340898760200368274, guid: c53b83258631b5b4ab7568d81d16b076, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1340898760200368274, guid: c53b83258631b5b4ab7568d81d16b076, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1340898760200368274, guid: c53b83258631b5b4ab7568d81d16b076, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1340898760200368274, guid: c53b83258631b5b4ab7568d81d16b076, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1340898760200368274, guid: c53b83258631b5b4ab7568d81d16b076, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1340898760200368274, guid: c53b83258631b5b4ab7568d81d16b076, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1340898760200368274, guid: c53b83258631b5b4ab7568d81d16b076, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1340898760200368274, guid: c53b83258631b5b4ab7568d81d16b076, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1340898760200368274, guid: c53b83258631b5b4ab7568d81d16b076, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1340898760200368278, guid: c53b83258631b5b4ab7568d81d16b076, type: 3}
+      propertyPath: m_Name
+      value: Triple_Shot_Powerup
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: c53b83258631b5b4ab7568d81d16b076, type: 3}
 --- !u!1 &929678430
 GameObject:
   m_ObjectHideFlags: 0
@@ -398,7 +455,9 @@ MonoBehaviour:
   _speed: 5
   _lives: 3
   _fireDelay: 0.2
+  _tripleShotEnabled: 0
   _laser: {fileID: 3257339953780460438, guid: 91909604bd39bdc4eb9968adefee6741, type: 3}
+  _tripleLaser: {fileID: 5478412243842935207, guid: 2f1f6a21ad5537548a820ff080ba6329, type: 3}
 --- !u!212 &1063408639
 SpriteRenderer:
   m_ObjectHideFlags: 0

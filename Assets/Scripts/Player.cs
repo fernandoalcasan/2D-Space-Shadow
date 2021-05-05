@@ -14,14 +14,18 @@ public class Player : MonoBehaviour
     [SerializeField]
     private float _fireDelay = 0.2f;
     private float _canShoot = -1f;
+    [SerializeField]
+    private bool _tripleShotEnabled = false;
 
     //bounds of field
     private float _xLimit = 10f;
     private float _yLimit = 5.5f;
 
-    //prefab for laser
+    //prefabs for laser
     [SerializeField]
     private GameObject _laser;
+    [SerializeField]
+    private GameObject _tripleLaser;
 
     //spawn manager connection
     private SpawnManager _spawnManager;
@@ -86,7 +90,15 @@ public class Player : MonoBehaviour
     {
         //Update delay time for laser
         _canShoot = Time.time + _fireDelay;
-        Instantiate(_laser, transform.position + new Vector3(0, 1f, 0), Quaternion.identity);
+
+        if(_tripleShotEnabled)
+        {
+            Instantiate(_tripleLaser, transform.position, Quaternion.identity);
+        }
+        else
+        {
+            Instantiate(_laser, transform.position + new Vector3(0, 1f, 0), Quaternion.identity);
+        }
     }
 
     public void GetDamage()
@@ -101,5 +113,17 @@ public class Player : MonoBehaviour
             }
             Destroy(gameObject);
         }
+    }
+
+    public void enableTripleShot()
+    {
+        _tripleShotEnabled = true;
+        StartCoroutine(disablePowerup());
+    }
+
+    IEnumerator disablePowerup()
+    {
+        yield return new WaitForSeconds(5f);
+        _tripleShotEnabled = false;
     }
 }
