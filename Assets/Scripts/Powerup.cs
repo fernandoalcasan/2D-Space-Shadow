@@ -22,7 +22,6 @@ public class Powerup : MonoBehaviour
     void Update()
     {
         MovePowerup();
-
     }
 
     void MovePowerup()
@@ -42,7 +41,7 @@ public class Powerup : MonoBehaviour
 
             if(!(player is null))
             {
-                player.enableTripleShot();
+                player.EnableTripleShot();
             }
             Destroy(gameObject);
         }

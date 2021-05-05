@@ -115,13 +115,13 @@ public class Player : MonoBehaviour
         }
     }
 
-    public void enableTripleShot()
+    public void EnableTripleShot()
     {
         _tripleShotEnabled = true;
-        StartCoroutine(disablePowerup());
+        StartCoroutine(DisablePowerup());
     }
 
-    IEnumerator disablePowerup()
+    IEnumerator DisablePowerup()
     {
         yield return new WaitForSeconds(5f);
         _tripleShotEnabled = false;
