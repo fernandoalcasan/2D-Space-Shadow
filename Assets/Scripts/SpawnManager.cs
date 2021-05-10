@@ -8,14 +8,23 @@ public class SpawnManager : MonoBehaviour
     [SerializeField]
     private GameObject _enemy;
 
+    //prefab of the powerup
+    [SerializeField]
+    private GameObject _tripleShot;
+
     [SerializeField]
     private GameObject _enemyContainer;
+
+    //Space Limits for powerup
+    private float _xLimit = 10f;
+    private float _yLimit = 6.5f;
 
     private bool _doNotSpawn = false;
 
     void Start()
     {
         StartCoroutine(SpawnEnemies());
+        StartCoroutine(SpawnPowerups());
     }
 
     void Update()
@@ -27,10 +36,20 @@ public class SpawnManager : MonoBehaviour
     {
         while (!_doNotSpawn)
         {
-            Vector3 xPosToSpawn = new Vector3(Random.Range(-10f, 10f), 6, 0);
+            Vector3 xPosToSpawn = new Vector3(Random.Range(-_xLimit, _xLimit), 6, 0);
             GameObject newEnemy = Instantiate(_enemy, xPosToSpawn, Quaternion.identity);
             newEnemy.transform.parent = _enemyContainer.transform;
             yield return new WaitForSeconds(2f);
+        }
+    }
+
+    IEnumerator SpawnPowerups()
+    {
+        while(!_doNotSpawn)
+        {
+            Vector3 initPos = new Vector3(Random.Range(-_xLimit, _xLimit), _yLimit, 0);
+            GameObject newPower = Instantiate(_tripleShot, initPos, Quaternion.identity);
+            yield return new WaitForSeconds(Random.Range(5f, 10f));
         }
     }
 
