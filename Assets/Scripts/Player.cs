@@ -30,7 +30,6 @@ public class Player : MonoBehaviour
     //spawn manager connection
     private SpawnManager _spawnManager;
 
-    // Start is called before the first frame update
     void Start()
     {
         // Set the player position = 0
@@ -43,7 +42,6 @@ public class Player : MonoBehaviour
         }
     }
 
-    // Update is called once per frame
     void Update()
     {
         MovePlayer();

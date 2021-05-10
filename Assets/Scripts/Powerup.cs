@@ -12,13 +12,11 @@ public class Powerup : MonoBehaviour
     private float _xLimit = 10f;
     private float _yLimit = 6.5f;
 
-    // Start is called before the first frame update
     void Start()
     {
         transform.position = new Vector3(Random.Range(-_xLimit, _xLimit), _yLimit, 0);
     }
 
-    // Update is called once per frame
     void Update()
     {
         MovePowerup();

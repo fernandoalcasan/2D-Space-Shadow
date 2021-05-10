@@ -11,13 +11,11 @@ public class Enemy : MonoBehaviour
     //Upper and inferior space limit
     private float _yLimit = 6f;
 
-    // Start is called before the first frame update
     void Start()
     {
         SetNewPos();
     }
 
-    // Update is called once per frame
     void Update()
     {
         //move towards the player

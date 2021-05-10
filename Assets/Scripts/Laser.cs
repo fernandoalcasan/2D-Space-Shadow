@@ -26,7 +26,16 @@ public class Laser : MonoBehaviour
         // if the laser goues off the limits gets destroyed
         if(transform.position.y > _yLimit)
         {
+            DestroyParent();
             Destroy(gameObject);
+        }
+    }
+
+    void DestroyParent()
+    {
+        if(!(transform.parent is null))
+        {
+            Destroy(transform.parent.gameObject);
         }
     }
 }
