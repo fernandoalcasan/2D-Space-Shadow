@@ -43,7 +43,18 @@ public class Powerup : MonoBehaviour
 
             if(!(player is null))
             {
-                player.EnablePowerup(_powerID);
+                switch(_powerID)
+                {
+                    case 0:
+                        player.EnablePowerup(_powerID, 5f);
+                        break;
+                    case 1:
+                        player.EnablePowerup(_powerID, 5f);
+                        break;
+                    case 2:
+                        player.EnablePowerup(_powerID, -1f);
+                        break;
+                }
             }
             Destroy(gameObject);
         }

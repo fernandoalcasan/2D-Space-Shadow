@@ -15,7 +15,7 @@ public class Player : MonoBehaviour
     [SerializeField]
     private float _fireDelay = 0.2f;
     private float _canShoot = -1f;
-    //0 = triple shot, 1 = speed boost, 2 = shield
+    // 0 = triple shot, 1 = speed boost, 2 = shield
     private bool[] _powerupsEnabled = new bool[3];
 
     //bounds of field
@@ -27,6 +27,10 @@ public class Player : MonoBehaviour
     private GameObject _laser;
     [SerializeField]
     private GameObject _tripleLaser;
+
+    //prefab for shield
+    [SerializeField]
+    private GameObject _shield;
 
     //spawn manager connection
     private SpawnManager _spawnManager;
@@ -63,7 +67,7 @@ public class Player : MonoBehaviour
         Vector3 dir = new Vector3(hInput, vInput, 0);
 
         // move player
-        transform.Translate(dir * _speed * (_powerupsEnabled[1] ? _speedBoost : 1f) * Time.deltaTime);
+        transform.Translate(dir * _speed * Time.deltaTime);
     }
 
     void LimitSpace()
@@ -102,6 +106,13 @@ public class Player : MonoBehaviour
 
     public void GetDamage()
     {
+        if(_powerupsEnabled[2]) //if shield is enabled
+        {
+            GameObject shield = transform.Find("Shield(Clone)").gameObject;
+            Destroy(shield);
+            _powerupsEnabled[2] = false;
+            return;
+        }
         _lives--;
 
         if(_lives < 1)
@@ -114,12 +125,25 @@ public class Player : MonoBehaviour
         }
     }
 
-    public void EnablePowerup(int power)
+    public void EnablePowerup(int power, float time)
     {
         if(power < _powerupsEnabled.Length && power >= 0)
         {
+            switch(power)
+            {
+                case 1:// speed boost
+                    _speed *= _speedBoost;
+                    break;
+                case 2://shield
+                    GameObject shield = Instantiate(_shield, transform.position, Quaternion.identity);
+                    shield.transform.parent = transform;
+                    break;
+            }
             _powerupsEnabled[power] = true;
-            StartCoroutine(DisablePowerup(power));
+            if(time > 0f) //if the powerup is temporary
+            {
+                StartCoroutine(DisableTempPowerup(power, time));
+            }
         }
         else
         {
@@ -127,9 +151,15 @@ public class Player : MonoBehaviour
         }
     }
 
-    IEnumerator DisablePowerup(int power)
+    IEnumerator DisableTempPowerup(int power, float time)
     {
-        yield return new WaitForSeconds(5f);
+        yield return new WaitForSeconds(time);
+        switch(power)
+        {
+            case 1:
+                _speed /= _speedBoost;
+                break;
+        }
         _powerupsEnabled[power] = false;
     }
 }
