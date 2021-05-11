@@ -12,6 +12,10 @@ public class Powerup : MonoBehaviour
     private float _xLimit = 10f;
     private float _yLimit = 6.5f;
 
+    //Power-up IDs
+    [SerializeField]
+    private int _powerID;
+
     void Start()
     {
         transform.position = new Vector3(Random.Range(-_xLimit, _xLimit), _yLimit, 0);
@@ -39,7 +43,7 @@ public class Powerup : MonoBehaviour
 
             if(!(player is null))
             {
-                player.EnableTripleShot();
+                player.EnablePowerup(_powerID);
             }
             Destroy(gameObject);
         }

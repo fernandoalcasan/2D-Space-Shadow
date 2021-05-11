@@ -7,6 +7,7 @@ public class Player : MonoBehaviour
     // Properties of the player
     [SerializeField]
     private float _speed = 5f;
+    private float _speedBoost = 2f;
     [SerializeField]
     private int _lives = 3;
 
@@ -14,8 +15,8 @@ public class Player : MonoBehaviour
     [SerializeField]
     private float _fireDelay = 0.2f;
     private float _canShoot = -1f;
-    [SerializeField]
-    private bool _tripleShotEnabled = false;
+    //0 = triple shot, 1 = speed boost, 2 = shield
+    private bool[] _powerupsEnabled = new bool[3];
 
     //bounds of field
     private float _xLimit = 10f;
@@ -62,7 +63,7 @@ public class Player : MonoBehaviour
         Vector3 dir = new Vector3(hInput, vInput, 0);
 
         // move player
-        transform.Translate(dir * _speed * Time.deltaTime);
+        transform.Translate(dir * _speed * (_powerupsEnabled[1] ? _speedBoost : 1f) * Time.deltaTime);
     }
 
     void LimitSpace()
@@ -89,7 +90,7 @@ public class Player : MonoBehaviour
         //Update delay time for laser
         _canShoot = Time.time + _fireDelay;
 
-        if(_tripleShotEnabled)
+        if(_powerupsEnabled[0])
         {
             Instantiate(_tripleLaser, transform.position, Quaternion.identity);
         }
@@ -113,15 +114,22 @@ public class Player : MonoBehaviour
         }
     }
 
-    public void EnableTripleShot()
+    public void EnablePowerup(int power)
     {
-        _tripleShotEnabled = true;
-        StartCoroutine(DisablePowerup());
+        if(power < _powerupsEnabled.Length && power >= 0)
+        {
+            _powerupsEnabled[power] = true;
+            StartCoroutine(DisablePowerup(power));
+        }
+        else
+        {
+            Debug.LogError("Index out of bounds");
+        }
     }
 
-    IEnumerator DisablePowerup()
+    IEnumerator DisablePowerup(int power)
     {
         yield return new WaitForSeconds(5f);
-        _tripleShotEnabled = false;
+        _powerupsEnabled[power] = false;
     }
 }
