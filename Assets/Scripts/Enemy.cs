@@ -11,10 +11,15 @@ public class Enemy : MonoBehaviour
     //Upper and inferior space limit
     private float _yLimit = 6f;
 
+    //Player reference
+    private Player _player;
+
     void Start()
     {
         SetNewPos();
+        _player = GameObject.Find("Player").GetComponent<Player>();
     }
+
 
     void Update()
     {
@@ -50,6 +55,10 @@ public class Enemy : MonoBehaviour
         else if (other.tag == "SimpleLaser")
         {
             Destroy(other.gameObject);
+            if(!(_player is null))
+            {
+                _player.IncreaseScore(10);
+            }
             Destroy(gameObject);
         }
 
