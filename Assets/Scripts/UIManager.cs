@@ -17,10 +17,15 @@ public class UIManager : MonoBehaviour
     [SerializeField]
     private Sprite[] _liveSprites;
 
+    // Game over ui text
+    [SerializeField]
+    private Text _gameOverText;
+
     // Start is called before the first frame update
     void Start()
     {
         _scoreText.text = "Score: 0";
+        _gameOverText.gameObject.SetActive(false);
     }
 
     // Update is called once per frame
@@ -37,5 +42,22 @@ public class UIManager : MonoBehaviour
     public void UpdateLives(int lives)
     {
         _livesImg.sprite = _liveSprites[lives];
+    }
+
+    public void OnPlayerDeath()
+    {
+        _gameOverText.gameObject.SetActive(true);
+        StartCoroutine(GameOverEffect());
+    }
+
+    IEnumerator GameOverEffect()
+    {
+        while(true)
+        {
+            _gameOverText.text = "Game Over";
+            yield return new WaitForSeconds(0.3f);
+            _gameOverText.text = "";
+            yield return new WaitForSeconds(0.3f);
+        }
     }
 }

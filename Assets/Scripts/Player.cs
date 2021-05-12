@@ -125,13 +125,20 @@ public class Player : MonoBehaviour
         }
         _lives--;
 
-        _uiManager.UpdateLives(_lives);
-
+        if (!(_uiManager is null))
+        {
+            _uiManager.UpdateLives(_lives);
+        }
+        
         if(_lives < 1)
         {
             if(!(_spawnManager is null))
             {
                 _spawnManager.OnPlayerDeath();
+            }
+            if(!(_uiManager is null))
+            {
+                _uiManager.OnPlayerDeath();
             }
             Destroy(gameObject);
         }
