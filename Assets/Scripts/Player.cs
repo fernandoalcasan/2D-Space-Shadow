@@ -106,7 +106,8 @@ public class Player : MonoBehaviour
 
     public void GetDamage()
     {
-        if(_powerupsEnabled[2])//if shield is active
+        // if shield is active
+        if (_powerupsEnabled[2])
         {
             _shield.SetActive(false);
             _powerupsEnabled[2] = false;
@@ -133,7 +134,7 @@ public class Player : MonoBehaviour
                 case 1:// speed boost
                     _speed *= _speedBoost;
                     break;
-                case 2: //shield
+                case 2: // shield
                     _shield.SetActive(true);
                     break;
             }
@@ -148,8 +149,6 @@ public class Player : MonoBehaviour
             Debug.LogError("Index out of bounds");
         }
     }
-
-
 
     IEnumerator DisableTempPowerup(int power, float time)
     {

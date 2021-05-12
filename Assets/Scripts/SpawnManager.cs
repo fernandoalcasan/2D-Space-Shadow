@@ -12,6 +12,7 @@ public class SpawnManager : MonoBehaviour
     [SerializeField]
     private GameObject[] _powerups = new GameObject[3];
 
+    //to store the instances of enemies
     [SerializeField]
     private GameObject _enemyContainer;
 
@@ -19,17 +20,13 @@ public class SpawnManager : MonoBehaviour
     private float _xLimit = 10f;
     private float _yLimit = 6.5f;
 
+    //to check if spawning is active
     private bool _doNotSpawn = false;
 
     void Start()
     {
         StartCoroutine(SpawnEnemies());
         StartCoroutine(SpawnPowerups());
-    }
-
-    void Update()
-    {
-
     }
 
     IEnumerator SpawnEnemies()
@@ -54,10 +51,8 @@ public class SpawnManager : MonoBehaviour
         }
     }
 
-
     public void OnPlayerDeath()
     {
         _doNotSpawn = true;
     }
-
 }

@@ -36,8 +36,6 @@ public class Enemy : MonoBehaviour
 
     void OnTriggerEnter2D(Collider2D other)
     {
-        //Debug.Log("Collided with: " + other.transform.name);
-
         //Collition with player
         if (other.tag == "Player")
         {
