@@ -125,6 +125,8 @@ public class Player : MonoBehaviour
         }
         _lives--;
 
+        _uiManager.UpdateLives(_lives);
+
         if(_lives < 1)
         {
             if(!(_spawnManager is null))
