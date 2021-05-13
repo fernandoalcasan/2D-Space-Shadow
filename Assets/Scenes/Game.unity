@@ -969,6 +969,18 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 2887801745116886057, guid: a4eb08e8785705343b15794dc74d2b5b, type: 3}
+      propertyPath: m_SortingLayer
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 2887801745116886057, guid: a4eb08e8785705343b15794dc74d2b5b, type: 3}
+      propertyPath: m_SortingOrder
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2887801745116886057, guid: a4eb08e8785705343b15794dc74d2b5b, type: 3}
+      propertyPath: m_SortingLayerID
+      value: -762834105
+      objectReference: {fileID: 0}
     - target: {fileID: 2887801745116886059, guid: a4eb08e8785705343b15794dc74d2b5b, type: 3}
       propertyPath: m_Name
       value: Shield
