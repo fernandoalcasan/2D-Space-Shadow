@@ -14,12 +14,29 @@ public class Enemy : MonoBehaviour
     //Player reference
     private Player _player;
 
+    //Animator reference
+    private Animator _anim;
+
+    //Death indicator
+    private bool _isEnemyDead;
+
     void Start()
     {
         SetNewPos();
         _player = GameObject.Find("Player").GetComponent<Player>();
-    }
 
+        if(_player is null)
+        {
+            Debug.LogError("The Player is NULL");
+        }
+
+        _anim = GetComponent<Animator>();
+
+        if(_anim is null)
+        {
+            Debug.LogError("The animator is NULL");
+        }
+    }
 
     void Update()
     {
@@ -41,26 +58,32 @@ public class Enemy : MonoBehaviour
 
     void OnTriggerEnter2D(Collider2D other)
     {
+        //to avoid making damage again while doing animation
+        if(_isEnemyDead)
+        {
+            return;
+        }
+
         //Collition with player
         if (other.tag == "Player")
         {
-            Player player = other.transform.GetComponent<Player>();
-            if (!(player is null))
-            {
-                player.GetDamage();
-            }
-            Destroy(gameObject);
+            _player.GetDamage();
+            DeathSequence();
         }
         //Collition with Laser
         else if (other.tag == "SimpleLaser")
         {
             Destroy(other.gameObject);
-            if(!(_player is null))
-            {
-                _player.IncreaseScore(10);
-            }
-            Destroy(gameObject);
+            _player.IncreaseScore(10);
+            DeathSequence();
         }
+    }
 
+    void DeathSequence()
+    {
+        _isEnemyDead = true;
+        _anim.SetTrigger("OnEnemyDeath");
+        _speed = 0f;
+        Destroy(gameObject, 1.19f);
     }
 }
