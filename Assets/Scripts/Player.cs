@@ -38,6 +38,11 @@ public class Player : MonoBehaviour
     // ui manager connection
     private UIManager _uiManager;
 
+    //Damage VFX objects
+    [SerializeField]
+    private GameObject[] _damage = new GameObject[2];
+
+
     void Start()
     {
         // Set the player position = 0
@@ -114,7 +119,7 @@ public class Player : MonoBehaviour
         }
     }
 
-    public void GetDamage()
+    public void GetDamage(int quadrant)
     {
         // if shield is active
         if (_powerupsEnabled[2])
@@ -123,23 +128,29 @@ public class Player : MonoBehaviour
             _powerupsEnabled[2] = false;
             return;
         }
+        
         _lives--;
+        _uiManager.UpdateLives(_lives);
 
-        if (!(_uiManager is null))
+        switch(quadrant)
         {
-            _uiManager.UpdateLives(_lives);
+            //right quadrants
+            case 1: case 4:
+                _damage[1].SetActive(true);
+                break;
+            //left quadrants
+            case 2: case 3:
+                _damage[0].SetActive(true);
+                break;
+            default:
+                Debug.LogError("Quadrant not found");
+                break;
         }
         
         if(_lives < 1)
-        {
-            if(!(_spawnManager is null))
-            {
-                _spawnManager.OnPlayerDeath();
-            }
-            if(!(_uiManager is null))
-            {
-                _uiManager.OnPlayerDeath();
-            }
+        { 
+            _spawnManager.OnPlayerDeath();
+            _uiManager.OnPlayerDeath();
             Destroy(gameObject);
         }
     }
@@ -185,5 +196,29 @@ public class Player : MonoBehaviour
     {
         _score += value;
         _uiManager.UpdateScore(_score);
+    }
+
+    public int GetDamageDirection(Vector3 otherPos)
+    {
+        Vector3 direction = otherPos - transform.position;
+        float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+
+        switch(angle)
+        {
+            //lower left quadrant
+            case float x when x <= -90f:
+                return 3;
+            //lower right quadrant
+            case float x when x <= 0f:
+                return 4;
+            //upper right quadrant
+            case float x when x <= 90f:
+                return 1;
+            //upper left quadrant
+            case float x when x <= 180f:
+                return 2;
+            default:
+                return 0;
+        }
     }
 }

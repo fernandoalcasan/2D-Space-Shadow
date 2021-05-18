@@ -67,7 +67,8 @@ public class Enemy : MonoBehaviour
         //Collition with player
         if (other.tag == "Player")
         {
-            _player.GetDamage();
+            int dir = _player.GetDamageDirection(transform.position);
+            _player.GetDamage(dir);
             DeathSequence();
         }
         //Collition with Laser

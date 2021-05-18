@@ -71,7 +71,8 @@ public class Asteroid : MonoBehaviour
         }
         else if (other.tag == "Player")
         {
-            _player.GetDamage();
+            int dir = _player.GetDamageDirection(transform.position);
+            _player.GetDamage(dir);
             OnAsteroidDestruction();
         }
     }
