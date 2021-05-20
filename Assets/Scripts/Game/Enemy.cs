@@ -20,21 +20,32 @@ public class Enemy : MonoBehaviour
     //Death indicator
     private bool _isEnemyDead;
 
+    //Audioclips
+    [SerializeField]
+    private AudioClip[] _audioClips;
+    //AudioSource
+    private AudioSource _audioSource;
+
     void Start()
     {
         SetNewPos();
         _player = GameObject.Find("Player").GetComponent<Player>();
+        _anim = GetComponent<Animator>();
+        _audioSource = GetComponent<AudioSource>();
 
-        if(_player is null)
+        if (_player is null)
         {
             Debug.LogError("The Player is NULL");
         }
 
-        _anim = GetComponent<Animator>();
-
         if(_anim is null)
         {
             Debug.LogError("The animator is NULL");
+        }
+
+        if (_audioSource is null)
+        {
+            Debug.LogError("AudioSource is NULL");
         }
     }
 
@@ -50,11 +61,19 @@ public class Enemy : MonoBehaviour
         }
     }
 
+    ////////////////////////////////
+    //POSITION//////////////////////
+    ////////////////////////////////
+
     void SetNewPos()
     {
         float randX = Random.Range(-10f, 10f);
         transform.position = new Vector3(randX, _yLimit, 0);
     }
+
+    ////////////////////////////////
+    //COLLISIONS////////////////////
+    ////////////////////////////////
 
     void OnTriggerEnter2D(Collider2D other)
     {
@@ -67,6 +86,8 @@ public class Enemy : MonoBehaviour
         //Collition with player
         if (other.tag == "Player")
         {
+            //EXPLOSION AUDIO
+            PlayAudio(0);
             int dir = _player.GetDamageDirection(transform.position);
             _player.GetDamage(dir);
             DeathSequence();
@@ -74,11 +95,17 @@ public class Enemy : MonoBehaviour
         //Collition with Laser
         else if (other.tag == "SimpleLaser")
         {
+            //EXPLOSION AUDIO
+            PlayAudio(0);
             Destroy(other.gameObject);
             _player.IncreaseScore(10);
             DeathSequence();
         }
     }
+
+    ////////////////////////////////
+    //ONDESTROY/////////////////////
+    ////////////////////////////////
 
     void DeathSequence()
     {
@@ -87,4 +114,18 @@ public class Enemy : MonoBehaviour
         _speed = 0f;
         Destroy(gameObject, 1.19f);
     }
+
+    ////////////////////////////////
+    //AUDIO/////////////////////////
+    ////////////////////////////////
+
+    void PlayAudio(int index)
+    {
+        if (index < _audioClips.Length && index >= 0)
+        {
+            _audioSource.clip = _audioClips[index];
+            _audioSource.Play();
+        }
+    }
+
 }

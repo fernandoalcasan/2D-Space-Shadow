@@ -42,6 +42,11 @@ public class Player : MonoBehaviour
     [SerializeField]
     private GameObject[] _damage = new GameObject[2];
 
+    //Audioclips
+    [SerializeField]
+    private AudioClip[] _audioClips;
+    //AudioSource
+    private AudioSource _audioSource;
 
     void Start()
     {
@@ -49,6 +54,7 @@ public class Player : MonoBehaviour
         transform.position = new Vector3(0, 0, 0);
         _spawnManager = GameObject.Find("Spawn_Manager").GetComponent<SpawnManager>();
         _uiManager = GameObject.Find("Canvas").GetComponent<UIManager>();
+        _audioSource = GetComponent<AudioSource>();
 
         if(_spawnManager is null)
         {
@@ -60,6 +66,10 @@ public class Player : MonoBehaviour
             Debug.LogError("The UI Manager is NULL");
         }
 
+        if(_audioSource is null)
+        {
+            Debug.LogError("AudioSource is NULL");
+        }
     }
 
     void Update()
@@ -73,6 +83,10 @@ public class Player : MonoBehaviour
             ShootLaser();
         }
     }
+
+    ////////////////////////////////
+    //MOVEMENT//////////////////////
+    ////////////////////////////////
 
     void MovePlayer()
     {
@@ -104,6 +118,10 @@ public class Player : MonoBehaviour
         //transform.position = new Vector3(Mathf.Clamp(transform.position.x, -_xLimit, _xLimit), Mathf.Clamp(transform.position.y, -_yLimit, _yLimit), 0);
     }
 
+    ////////////////////////////////
+    //SHOOTING//////////////////////
+    ////////////////////////////////
+
     void ShootLaser()
     {
         //Update delay time for laser
@@ -117,7 +135,13 @@ public class Player : MonoBehaviour
         {
             Instantiate(_laser, transform.position + new Vector3(0, 1f, 0), Quaternion.identity);
         }
+        //Play laser audio
+        PlayAudio(0);
     }
+
+    ////////////////////////////////
+    //DAMAGE////////////////////////
+    ////////////////////////////////
 
     public void GetDamage(int quadrant)
     {
@@ -154,6 +178,34 @@ public class Player : MonoBehaviour
             Destroy(gameObject);
         }
     }
+
+    public int GetDamageDirection(Vector3 otherPos)
+    {
+        Vector3 direction = otherPos - transform.position;
+        float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+
+        switch (angle)
+        {
+            //lower left quadrant
+            case float x when x <= -90f:
+                return 3;
+            //lower right quadrant
+            case float x when x <= 0f:
+                return 4;
+            //upper right quadrant
+            case float x when x <= 90f:
+                return 1;
+            //upper left quadrant
+            case float x when x <= 180f:
+                return 2;
+            default:
+                return 0;
+        }
+    }
+
+    ////////////////////////////////
+    //POWERUPS//////////////////////
+    ////////////////////////////////
 
     public void EnablePowerup(int power, float time)
     {
@@ -192,33 +244,26 @@ public class Player : MonoBehaviour
         _powerupsEnabled[power] = false;
     }
 
+    ////////////////////////////////
+    //SCORE/////////////////////////
+    ////////////////////////////////
+
     public void IncreaseScore(int value)
     {
         _score += value;
         _uiManager.UpdateScore(_score);
     }
 
-    public int GetDamageDirection(Vector3 otherPos)
+    ////////////////////////////////
+    //AUDIO/////////////////////////
+    ////////////////////////////////
+    
+    void PlayAudio(int index)
     {
-        Vector3 direction = otherPos - transform.position;
-        float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
-
-        switch(angle)
+        if(index < _audioClips.Length && index >= 0)
         {
-            //lower left quadrant
-            case float x when x <= -90f:
-                return 3;
-            //lower right quadrant
-            case float x when x <= 0f:
-                return 4;
-            //upper right quadrant
-            case float x when x <= 90f:
-                return 1;
-            //upper left quadrant
-            case float x when x <= 180f:
-                return 2;
-            default:
-                return 0;
+            _audioSource.clip = _audioClips[index];
+            _audioSource.Play();
         }
     }
 }
