@@ -16,6 +16,10 @@ public class Powerup : MonoBehaviour
     [SerializeField]
     private int _powerID;
 
+    //Collection audio
+    [SerializeField]
+    private AudioClip _collectedAudio;
+
     void Start()
     {
         transform.position = new Vector3(Random.Range(-_xLimit, _xLimit), _yLimit, 0);
@@ -26,6 +30,10 @@ public class Powerup : MonoBehaviour
         MovePowerup();
     }
 
+    ////////////////////////////////
+    //MOVEMENT//////////////////////
+    ////////////////////////////////
+
     void MovePowerup()
     {
         transform.Translate(Vector3.down * _speed * Time.deltaTime);
@@ -34,6 +42,10 @@ public class Powerup : MonoBehaviour
             Destroy(gameObject);
         }
     }
+
+    ////////////////////////////////
+    //ONDESTROY/////////////////////
+    ////////////////////////////////
 
     private void OnTriggerEnter2D(Collider2D other)
     {
@@ -56,6 +68,7 @@ public class Powerup : MonoBehaviour
                         break;
                 }
             }
+            AudioSource.PlayClipAtPoint(_collectedAudio, transform.position);
             Destroy(gameObject);
         }
     }
