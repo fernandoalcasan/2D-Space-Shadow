@@ -17,9 +17,6 @@ public class Enemy : MonoBehaviour
     //Animator reference
     private Animator _anim;
 
-    //Death indicator
-    private bool _isEnemyDead;
-
     //Audioclips
     [SerializeField]
     private AudioClip[] _audioClips;
@@ -77,12 +74,6 @@ public class Enemy : MonoBehaviour
 
     void OnTriggerEnter2D(Collider2D other)
     {
-        //to avoid making damage again while doing animation
-        if(_isEnemyDead)
-        {
-            return;
-        }
-
         //Collition with player
         if (other.tag == "Player")
         {
@@ -109,7 +100,8 @@ public class Enemy : MonoBehaviour
 
     void DeathSequence()
     {
-        _isEnemyDead = true;
+        //to avoid making damage again while doing animation
+        Destroy(GetComponent<Collider2D>());
         _anim.SetTrigger("OnEnemyDeath");
         _speed = 0f;
         Destroy(gameObject, 1.19f);
