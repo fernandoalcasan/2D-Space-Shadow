@@ -164,8 +164,10 @@ public class Player : MonoBehaviour
         
         _lives--;
         _uiManager.UpdateLives(_lives);
+        //Play damage audio
+        PlayAudio(1);
 
-        switch(quadrant)
+        switch (quadrant)
         {
             //right quadrants
             case 1: case 4:
@@ -179,9 +181,11 @@ public class Player : MonoBehaviour
                 Debug.LogError("Quadrant not found");
                 break;
         }
-        
-        if(_lives < 1)
-        { 
+
+        if (_lives < 1)
+        {
+            //Play explosion audio
+            AudioSource.PlayClipAtPoint(_audioClips[2], Camera.main.transform.position);
             _spawnManager.OnPlayerDeath();
             _uiManager.OnPlayerDeath();
             Destroy(gameObject);

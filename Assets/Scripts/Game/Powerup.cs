@@ -68,7 +68,7 @@ public class Powerup : MonoBehaviour
                         break;
                 }
             }
-            AudioSource.PlayClipAtPoint(_collectedAudio, transform.position);
+            AudioSource.PlayClipAtPoint(_collectedAudio, Camera.main.transform.position);
             Destroy(gameObject);
         }
     }
