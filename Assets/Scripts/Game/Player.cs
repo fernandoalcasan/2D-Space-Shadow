@@ -13,7 +13,9 @@ public class Player : MonoBehaviour
     [SerializeField]
     private int _lives = 3;
     private int _score;
+    private float _thrusterEnergy = 100f;
 
+    //possible rigidbody
     //private Rigidbody2D _rb;
 
     //Fire properties
@@ -99,11 +101,20 @@ public class Player : MonoBehaviour
         float vInput = Input.GetAxis("Vertical");
         // get direction of movement
         Vector3 dir = new Vector3(hInput, vInput, 0);
-        //Vector3 dir = new Vector3(0, vInput, 0);
 
         // move player
-        transform.Translate(dir * _speed * Time.deltaTime);
-        
+        if (Input.GetKey(KeyCode.LeftShift) && _thrusterEnergy > 0f)
+        {
+            transform.Translate(dir * _speed * _speedBoost * Time.deltaTime);
+            _thrusterEnergy -= 0.05f;
+        }
+        else
+        {
+            transform.Translate(dir * _speed * Time.deltaTime);
+        }
+
+        //Movement with rigidbody
+        //Vector3 dir = new Vector3(0, vInput, 0);
         //_rb.AddForce(transform.up.normalized * vInput * _speed);
         //transform.Rotate(0, 0, -hInput * _rotationSpeed);
     }
