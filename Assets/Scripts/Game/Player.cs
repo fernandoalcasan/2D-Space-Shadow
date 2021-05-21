@@ -7,10 +7,14 @@ public class Player : MonoBehaviour
     // Properties of the player
     [SerializeField]
     private float _speed = 5f;
+    //[SerializeField]
+    //private float _rotationSpeed = 1f;
     private float _speedBoost = 2f;
     [SerializeField]
     private int _lives = 3;
     private int _score;
+
+    //private Rigidbody2D _rb;
 
     //Fire properties
     [SerializeField]
@@ -55,6 +59,7 @@ public class Player : MonoBehaviour
         _spawnManager = GameObject.Find("Spawn_Manager").GetComponent<SpawnManager>();
         _uiManager = GameObject.Find("Canvas").GetComponent<UIManager>();
         _audioSource = GetComponent<AudioSource>();
+        //_rb = GetComponent<Rigidbody2D>();
 
         if(_spawnManager is null)
         {
@@ -94,9 +99,13 @@ public class Player : MonoBehaviour
         float vInput = Input.GetAxis("Vertical");
         // get direction of movement
         Vector3 dir = new Vector3(hInput, vInput, 0);
+        //Vector3 dir = new Vector3(0, vInput, 0);
 
         // move player
         transform.Translate(dir * _speed * Time.deltaTime);
+        
+        //_rb.AddForce(transform.up.normalized * vInput * _speed);
+        //transform.Rotate(0, 0, -hInput * _rotationSpeed);
     }
 
     void LimitSpace()
@@ -129,11 +138,11 @@ public class Player : MonoBehaviour
 
         if(_powerupsEnabled[0])
         {
-            Instantiate(_tripleLaser, transform.position, Quaternion.identity);
+            Instantiate(_tripleLaser, transform.position, transform.rotation);
         }
         else
         {
-            Instantiate(_laser, transform.position + new Vector3(0, 1f, 0), Quaternion.identity);
+            Instantiate(_laser, transform.position + transform.up, transform.rotation);
         }
         //Play laser audio
         PlayAudio(0);

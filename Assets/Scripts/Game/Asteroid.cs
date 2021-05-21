@@ -85,12 +85,12 @@ public class Asteroid : MonoBehaviour
             return;
         }
 
-        if(other.tag == "SimpleLaser")
+        if(other.CompareTag("SimpleLaser"))
         {
             Destroy(other.gameObject);
             OnAsteroidDestruction();
         }
-        else if (other.tag == "Player")
+        else if (other.CompareTag("Player"))
         {
             int dir = _player.GetDamageDirection(transform.position);
             _player.GetDamage(dir);

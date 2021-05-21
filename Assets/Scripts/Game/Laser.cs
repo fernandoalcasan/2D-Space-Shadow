@@ -8,22 +8,55 @@ public class Laser : MonoBehaviour
     [SerializeField]
     private float _speed = 8f;
 
-    //Bounds for the laser
-    private float _yLimit = 7f;
+    private bool _isEnemyLaser = false;
 
     // Update is called once per frame
     void Update()
     {
-        //Laser goes up
-        transform.Translate(Vector3.up * _speed * Time.deltaTime);
-
-        // if the laser goues off the limits gets destroyed
-        if(transform.position.y > _yLimit)
+        //Debug.Log("laser dir is: " + new Vector3(0,,90).normalized);
+        
+        if(_isEnemyLaser)
         {
-            DestroyParent();
+            transform.Translate(Vector3.down * _speed * Time.deltaTime);
+        }
+        else
+        {
+            transform.Translate(Vector3.up * _speed * Time.deltaTime);
+        }
+    }
+
+    ////////////////////////////////
+    //ASSIGN PROPERTIES/////////////
+    ////////////////////////////////
+
+    public void SetEnemyLaser()
+    {
+        _isEnemyLaser = true;
+    }
+
+    ////////////////////////////////
+    //DAMAGE///////////////////////
+    ////////////////////////////////
+
+    private void OnTriggerEnter2D(Collider2D other)
+    {
+        if(_isEnemyLaser && other.CompareTag("Player"))
+        {
+            Player player = other.GetComponent<Player>();
+            if(!(player is null))
+            {
+                int quadrant = player.GetDamageDirection(transform.position);
+                player.GetDamage(quadrant);
+            }
             Destroy(gameObject);
         }
     }
+
+
+
+    ////////////////////////////////
+    //ONDESTROY/////////////////////
+    ////////////////////////////////
 
     void DestroyParent()
     {
@@ -31,5 +64,12 @@ public class Laser : MonoBehaviour
         {
             Destroy(transform.parent.gameObject);
         }
+    }
+
+    // if the laser goes off the camera gets destroyed
+    private void OnBecameInvisible()
+    {
+        DestroyParent();
+        Destroy(gameObject);
     }
 }

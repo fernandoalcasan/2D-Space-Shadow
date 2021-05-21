@@ -11,6 +11,14 @@ public class Enemy : MonoBehaviour
     //Upper and inferior space limit
     private float _yLimit = 6f;
 
+    //Fire properties
+    [SerializeField]
+    private float _fireDelay = 3f;
+    private float _canShoot = -1f;
+
+    [SerializeField]
+    private GameObject _enemyLaser;
+
     //Player reference
     private Player _player;
 
@@ -48,24 +56,50 @@ public class Enemy : MonoBehaviour
 
     void Update()
     {
-        //move towards the player
-        transform.Translate(Vector3.down * _speed * Time.deltaTime);
+        MoveEnemy();
 
-        //Teleport enemy if it reaches the bottom
-        if(transform.position.y < -_yLimit)
+        if (Time.time > _canShoot)
         {
-            SetNewPos();
+            ShootLaser();
         }
+
     }
 
     ////////////////////////////////
-    //POSITION//////////////////////
+    //SHOOTING//////////////////////
+    ////////////////////////////////
+
+    void ShootLaser()
+    {
+        _fireDelay = Random.Range(3f, 7f);
+        //Update delay time for laser
+        _canShoot = Time.time + _fireDelay;
+
+        Vector3 laserSide =transform.position - (transform.up * 1.33f) + (Vector3.right * (Random.Range(0,2) == 0 ? 0.184f : -0.184f));
+        GameObject laser = Instantiate(_enemyLaser, laserSide, transform.rotation);
+        laser.GetComponent<Laser>().SetEnemyLaser();
+    }
+
+    ////////////////////////////////
+    //MOVEMENT//////////////////////
     ////////////////////////////////
 
     void SetNewPos()
     {
         float randX = Random.Range(-10f, 10f);
         transform.position = new Vector3(randX, _yLimit, 0);
+    }
+
+    void MoveEnemy()
+    {
+        //move towards the player
+        transform.Translate(Vector3.down * _speed * Time.deltaTime);
+        
+        //Teleport enemy if it reaches the bottom
+        if (transform.position.y < -_yLimit)
+        {
+            SetNewPos();
+        }
     }
 
     ////////////////////////////////
@@ -75,7 +109,7 @@ public class Enemy : MonoBehaviour
     void OnTriggerEnter2D(Collider2D other)
     {
         //Collition with player
-        if (other.tag == "Player")
+        if (other.CompareTag("Player"))
         {
             //EXPLOSION AUDIO
             PlayAudio(0);
@@ -84,7 +118,7 @@ public class Enemy : MonoBehaviour
             DeathSequence();
         }
         //Collition with Laser
-        else if (other.tag == "SimpleLaser")
+        else if (other.CompareTag("SimpleLaser"))
         {
             //EXPLOSION AUDIO
             PlayAudio(0);
