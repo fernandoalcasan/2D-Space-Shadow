@@ -10,11 +10,12 @@ public class Laser : MonoBehaviour
 
     private bool _isEnemyLaser = false;
 
+    //Bounds for the laser
+    private float _yLimit = 7f;
+
     // Update is called once per frame
     void Update()
-    {
-        //Debug.Log("laser dir is: " + new Vector3(0,,90).normalized);
-        
+    {        
         if(_isEnemyLaser)
         {
             transform.Translate(Vector3.down * _speed * Time.deltaTime);
@@ -22,6 +23,11 @@ public class Laser : MonoBehaviour
         else
         {
             transform.Translate(Vector3.up * _speed * Time.deltaTime);
+        }
+
+        if(transform.position.y > _yLimit || transform.position.y < -_yLimit)
+        {
+            DestroyLaser();
         }
     }
 
@@ -66,10 +72,10 @@ public class Laser : MonoBehaviour
         }
     }
 
-    // if the laser goes off the camera gets destroyed
-    private void OnBecameInvisible()
+    private void DestroyLaser()
     {
         DestroyParent();
         Destroy(gameObject);
     }
+
 }

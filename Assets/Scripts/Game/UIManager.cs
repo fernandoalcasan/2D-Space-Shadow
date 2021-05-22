@@ -28,16 +28,36 @@ public class UIManager : MonoBehaviour
     //Game Manager reference
     private GameManager _gameManager;
 
+    //Thruster bar mask reference
+    [SerializeField]
+    private Image _thrusterBarMask;
+
+    //Thruster bar reference
+    [SerializeField]
+    private Image _thrusterBarFill;
+
+    //Thruster threshold fill reference
+    [SerializeField]
+    private Image _thrusterThresholdFill;
+
+    //Animator reference
+    private Animator _thresholdAnim;
+
     // Start is called before the first frame update
     void Start()
     {
         _scoreText.text = "Score: 0";
         _gameOverText.gameObject.SetActive(false);
         _gameManager = GameObject.Find("Game_Manager").GetComponent<GameManager>();
+        _thresholdAnim = GameObject.Find("Threshold_img").GetComponent<Animator>();
 
-        if(_gameManager is null)
+        if (_gameManager is null)
         {
             Debug.LogError("Game Manager is NULL");
+        }
+        if (_thresholdAnim is null)
+        {
+            Debug.LogError("Threshold animator is NULL");
         }
     }
 
@@ -58,6 +78,37 @@ public class UIManager : MonoBehaviour
         {
             _livesImg.sprite = _liveSprites[lives];
         }
+    }
+
+    public void UpdateBarEnergy(float value, float maxValue)
+    {
+        float amount = value / maxValue;
+        _thrusterBarMask.fillAmount = amount;
+
+        //change color
+        switch(amount)
+        {
+            case float x when x <= 0.3f:
+                _thrusterBarFill.color = Color.red;
+                break;
+            case float x when x <= 0.75f:
+                _thrusterBarFill.color = Color.yellow;
+                break;
+            case float x when x > 0.75f:
+                _thrusterBarFill.color = Color.green;
+                break;
+        }
+    }
+
+    public void UpdateThresholdEnergy(float value, float maxValue)
+    {
+        float amount = value / maxValue;
+        _thrusterThresholdFill.fillAmount = amount;
+    }
+
+    public void ThresholdReached()
+    {
+        _thresholdAnim.SetTrigger("Overheat");
     }
 
     public void OnPlayerDeath()

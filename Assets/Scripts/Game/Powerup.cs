@@ -60,8 +60,8 @@ public class Powerup : MonoBehaviour
                     case 0: //triple shot
                         player.EnablePowerup(_powerID, 5f);
                         break;
-                    case 1: // speed boost
-                        player.EnablePowerup(_powerID, 5f);
+                    case 1: // speed energy refill
+                        player.EnablePowerup(_powerID, -1f);
                         break;
                     case 2: //shield
                         player.EnablePowerup(_powerID, -1f);

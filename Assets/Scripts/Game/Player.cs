@@ -13,7 +13,16 @@ public class Player : MonoBehaviour
     [SerializeField]
     private int _lives = 3;
     private int _score;
+
+    //thruster properties
+    [SerializeField]
     private float _thrusterEnergy = 100f;
+    private float _maxThrusterEnergy;
+    private float _boostDelay = 2f;
+    private bool _canBoost = true;
+    private float _maxBoost = 15f;
+    private float _currentBoost = 0f;
+    private float _energyPerFrame = 0.05f;
 
     //possible rigidbody
     //private Rigidbody2D _rb;
@@ -61,9 +70,10 @@ public class Player : MonoBehaviour
         _spawnManager = GameObject.Find("Spawn_Manager").GetComponent<SpawnManager>();
         _uiManager = GameObject.Find("Canvas").GetComponent<UIManager>();
         _audioSource = GetComponent<AudioSource>();
+        _maxThrusterEnergy = _thrusterEnergy;
         //_rb = GetComponent<Rigidbody2D>();
 
-        if(_spawnManager is null)
+        if (_spawnManager is null)
         {
             Debug.LogError("The spawn manager is NULL");
         }
@@ -99,24 +109,73 @@ public class Player : MonoBehaviour
     {
         float hInput = Input.GetAxis("Horizontal");
         float vInput = Input.GetAxis("Vertical");
+
         // get direction of movement
         Vector3 dir = new Vector3(hInput, vInput, 0);
 
-        // move player
-        if (Input.GetKey(KeyCode.LeftShift) && _thrusterEnergy > 0f)
+        // move player with or without boost
+        if (Input.GetKey(KeyCode.LeftShift) && _canBoost)
         {
             transform.Translate(dir * _speed * _speedBoost * Time.deltaTime);
-            _thrusterEnergy -= 0.05f;
+
+            //waste energy
+            _thrusterEnergy -= _energyPerFrame;
+
+            //energy available?
+            if (_thrusterEnergy <= 0f)
+            {
+                _canBoost = false;
+                _thrusterEnergy = 0f;
+            }
+
+            //sum wasted energy to reach the threshold
+            _currentBoost += _energyPerFrame;
+
+            //threshold reached
+            if(_currentBoost >= _maxBoost)
+            {
+                StartCoroutine(ThrusterNeedsBreak());
+            }
+
+            //Update UI
+            _uiManager.UpdateBarEnergy(_thrusterEnergy, _maxThrusterEnergy);
+            _uiManager.UpdateThresholdEnergy(_currentBoost, _maxBoost);
         }
         else
         {
             transform.Translate(dir * _speed * Time.deltaTime);
+
+            //lower the energy wasted in a single boost
+            if(_currentBoost > 0f)
+            {
+                _currentBoost -= (_energyPerFrame * 2);
+                //Update UI
+                _uiManager.UpdateThresholdEnergy(_currentBoost, _maxBoost);
+            }
         }
 
         //Movement with rigidbody
         //Vector3 dir = new Vector3(0, vInput, 0);
         //_rb.AddForce(transform.up.normalized * vInput * _speed);
         //transform.Rotate(0, 0, -hInput * _rotationSpeed);
+    }
+
+    IEnumerator ThrusterNeedsBreak()
+    {
+        //Deactivate thrusters
+        _canBoost = false;
+        //play animation
+        _uiManager.ThresholdReached();
+
+        //wait for the delay to activate thrusters
+        yield return new WaitForSeconds(_boostDelay);
+
+        //energy remaining? activate thrusters
+        if (_thrusterEnergy > 0f)
+        {
+            _canBoost = true;
+        }
+        _currentBoost = 0f;
     }
 
     void LimitSpace()
@@ -237,8 +296,14 @@ public class Player : MonoBehaviour
         {
             switch(power)
             {
-                case 1:// speed boost
-                    _speed *= _speedBoost;
+                case 1:// thruster energy unit refill
+                    //_speed *= _speedBoost;
+                    _thrusterEnergy += _maxBoost;
+                    if(_thrusterEnergy > _maxThrusterEnergy)
+                    {
+                        _thrusterEnergy = _maxThrusterEnergy;
+                    }
+                    _uiManager.UpdateBarEnergy(_thrusterEnergy, _maxThrusterEnergy);
                     break;
                 case 2: // shield
                     _shield.SetActive(true);
