@@ -7,8 +7,6 @@ public class Player : MonoBehaviour
     // Properties of the player
     [SerializeField]
     private float _speed = 5f;
-    //[SerializeField]
-    //private float _rotationSpeed = 1f;
     private float _speedBoost = 2f;
     [SerializeField]
     private int _lives = 3;
@@ -44,6 +42,7 @@ public class Player : MonoBehaviour
     //prefab for shield
     [SerializeField]
     private GameObject _shield;
+    private Shield _shieldBehavior;
 
     //spawn manager connection
     private SpawnManager _spawnManager;
@@ -79,6 +78,8 @@ public class Player : MonoBehaviour
 
         _maxThrusterEnergy = _thrusterEnergy;
 
+        _shieldBehavior = _shield.GetComponent<Shield>();
+
         if (_spawnManager is null)
         {
             Debug.LogError("The spawn manager is NULL");
@@ -97,6 +98,11 @@ public class Player : MonoBehaviour
         if (_movementAudioSource is null)
         {
             Debug.LogError("Movement Audio Source is NULL");
+        }
+
+        if (_shieldBehavior is null)
+        {
+            Debug.LogError("Shield script is NULL");
         }
     }
 
@@ -258,8 +264,9 @@ public class Player : MonoBehaviour
         // if shield is active
         if (_powerupsEnabled[2])
         {
-            _shield.SetActive(false);
-            _powerupsEnabled[2] = false;
+            bool stillsActive = _shieldBehavior.DamageShield();
+            _shield.SetActive(stillsActive);
+            _powerupsEnabled[2] = stillsActive;
             return;
         }
         
@@ -338,7 +345,14 @@ public class Player : MonoBehaviour
                     _canBoost = true;
                     break;
                 case 2: // shield
-                    _shield.SetActive(true);
+                    if (_powerupsEnabled[power]) //shield is active already
+                    {
+                        _shieldBehavior.RestoreShield();
+                    }
+                    else
+                    {
+                        _shield.SetActive(true);
+                    }
                     break;
             }
             _powerupsEnabled[power] = true;
