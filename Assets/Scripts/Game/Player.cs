@@ -32,7 +32,7 @@ public class Player : MonoBehaviour
     private float _fireDelay = 0.2f;
     private float _canShoot = -1f;
     // 0 = triple shot, 1 = speed boost, 2 = shield
-    private bool[] _powerupsEnabled = new bool[3];
+    private bool[] _powerupsEnabled;
 
     //bounds of field
     private float _xLimit = 10f;
@@ -60,16 +60,26 @@ public class Player : MonoBehaviour
     //Audioclips
     [SerializeField]
     private AudioClip[] _audioClips;
-    //AudioSource
-    private AudioSource _audioSource;
+    //AudioSource for trigger sounds
+    private AudioSource _triggerAudioSource;
+    //AudioSource for constant movement sounds
+    private AudioSource _movementAudioSource;
+    private bool _isBoosting;
+
+    
 
     void Start()
     {
         // Set the player position = 0
         transform.position = new Vector3(0, 0, 0);
+        
+        _powerupsEnabled = new bool[3];
+
         _spawnManager = GameObject.Find("Spawn_Manager").GetComponent<SpawnManager>();
         _uiManager = GameObject.Find("Canvas").GetComponent<UIManager>();
-        _audioSource = GetComponent<AudioSource>();
+        _triggerAudioSource = GameObject.Find("Trigger_Sounds").GetComponent<AudioSource>();
+        _movementAudioSource = GameObject.Find("Player_Movement_Sounds").GetComponent<AudioSource>();
+
         _maxThrusterEnergy = _thrusterEnergy;
         //_rb = GetComponent<Rigidbody2D>();
 
@@ -83,9 +93,14 @@ public class Player : MonoBehaviour
             Debug.LogError("The UI Manager is NULL");
         }
 
-        if(_audioSource is null)
+        if(_triggerAudioSource is null)
         {
-            Debug.LogError("AudioSource is NULL");
+            Debug.LogError("Trigger Audio Source is NULL");
+        }
+
+        if (_movementAudioSource is null)
+        {
+            Debug.LogError("Movement Audio Source is NULL");
         }
     }
 
@@ -116,6 +131,19 @@ public class Player : MonoBehaviour
         // move player with or without boost
         if (Input.GetKey(KeyCode.LeftShift) && _canBoost)
         {
+            //stop movement sound if it's playing
+            if (!_isBoosting)
+            {
+                _movementAudioSource.Stop();
+                _isBoosting = true;
+            }
+
+            //play the boost sound if it's not playing
+            if (!_movementAudioSource.isPlaying)
+            {
+                PlayMovementAudio(3);
+            }
+            
             transform.Translate(dir * _speed * _speedBoost * Time.deltaTime);
 
             //waste energy
@@ -143,6 +171,19 @@ public class Player : MonoBehaviour
         }
         else
         {
+            //stop boost sound if it's playing
+            if (_isBoosting)
+            {
+                _movementAudioSource.Stop();
+                _isBoosting = false;
+            }
+
+            //play the movement sound if it's not playing
+            if (!_movementAudioSource.isPlaying)
+            {
+                PlayMovementAudio(4);
+            }
+            
             transform.Translate(dir * _speed * Time.deltaTime);
 
             //lower the energy wasted in a single boost
@@ -164,6 +205,7 @@ public class Player : MonoBehaviour
     {
         //Deactivate thrusters
         _canBoost = false;
+
         //play animation
         _uiManager.ThresholdReached();
 
@@ -214,8 +256,9 @@ public class Player : MonoBehaviour
         {
             Instantiate(_laser, transform.position + transform.up, transform.rotation);
         }
+
         //Play laser audio
-        PlayAudio(0);
+        PlayTriggerAudio(0);
     }
 
     ////////////////////////////////
@@ -234,8 +277,9 @@ public class Player : MonoBehaviour
         
         _lives--;
         _uiManager.UpdateLives(_lives);
+
         //Play damage audio
-        PlayAudio(1);
+        PlayTriggerAudio(1);
 
         switch (quadrant)
         {
@@ -297,13 +341,13 @@ public class Player : MonoBehaviour
             switch(power)
             {
                 case 1:// thruster energy unit refill
-                    //_speed *= _speedBoost;
                     _thrusterEnergy += _maxBoost;
                     if(_thrusterEnergy > _maxThrusterEnergy)
                     {
                         _thrusterEnergy = _maxThrusterEnergy;
                     }
                     _uiManager.UpdateBarEnergy(_thrusterEnergy, _maxThrusterEnergy);
+                    _canBoost = true;
                     break;
                 case 2: // shield
                     _shield.SetActive(true);
@@ -347,12 +391,21 @@ public class Player : MonoBehaviour
     //AUDIO/////////////////////////
     ////////////////////////////////
     
-    void PlayAudio(int index)
+    void PlayTriggerAudio(int index)
     {
         if(index < _audioClips.Length && index >= 0)
         {
-            _audioSource.clip = _audioClips[index];
-            _audioSource.Play();
+            _triggerAudioSource.clip = _audioClips[index];
+            _triggerAudioSource.Play();
+        }
+    }
+
+    void PlayMovementAudio(int index)
+    {
+        if (index < _audioClips.Length && index >= 0)
+        {
+            _movementAudioSource.clip = _audioClips[index];
+            _movementAudioSource.Play();
         }
     }
 }

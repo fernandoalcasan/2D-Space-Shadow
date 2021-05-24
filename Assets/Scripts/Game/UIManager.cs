@@ -43,6 +43,12 @@ public class UIManager : MonoBehaviour
     //Animator reference
     private Animator _thresholdAnim;
 
+    //Audio Source & clips
+    private AudioSource _uiAudioPlayer;
+    [SerializeField]
+    private AudioClip[] _uiSounds;
+
+
     // Start is called before the first frame update
     void Start()
     {
@@ -50,6 +56,7 @@ public class UIManager : MonoBehaviour
         _gameOverText.gameObject.SetActive(false);
         _gameManager = GameObject.Find("Game_Manager").GetComponent<GameManager>();
         _thresholdAnim = GameObject.Find("Threshold_img").GetComponent<Animator>();
+        _uiAudioPlayer = GameObject.Find("UI_Sounds").GetComponent<AudioSource>();
 
         if (_gameManager is null)
         {
@@ -59,6 +66,10 @@ public class UIManager : MonoBehaviour
         {
             Debug.LogError("Threshold animator is NULL");
         }
+        if (_uiAudioPlayer is null)
+        {
+            Debug.LogError("UI Audio Source is NULL");
+        }
     }
 
     // Update is called once per frame
@@ -66,6 +77,10 @@ public class UIManager : MonoBehaviour
     {
         
     }
+
+    ////////////////////////////////
+    //UPDATE UI/////////////////////
+    ////////////////////////////////
 
     public void UpdateScore(int value)
     {
@@ -109,6 +124,7 @@ public class UIManager : MonoBehaviour
     public void ThresholdReached()
     {
         _thresholdAnim.SetTrigger("Overheat");
+        PlayAudio(0);
     }
 
     public void OnPlayerDeath()
@@ -127,6 +143,19 @@ public class UIManager : MonoBehaviour
             yield return new WaitForSeconds(0.3f);
             _gameOverText.text = "";
             yield return new WaitForSeconds(0.3f);
+        }
+    }
+
+    ////////////////////////////////
+    //AUDIO/////////////////////////
+    ////////////////////////////////
+
+    void PlayAudio(int index)
+    {
+        if (index < _uiSounds.Length && index >= 0)
+        {
+            _uiAudioPlayer.clip = _uiSounds[index];
+            _uiAudioPlayer.Play();
         }
     }
 }
