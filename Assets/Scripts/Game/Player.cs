@@ -24,9 +24,6 @@ public class Player : MonoBehaviour
     private float _currentBoost = 0f;
     private float _energyPerFrame = 0.05f;
 
-    //possible rigidbody
-    //private Rigidbody2D _rb;
-
     //Fire properties
     [SerializeField]
     private float _fireDelay = 0.2f;
@@ -60,8 +57,8 @@ public class Player : MonoBehaviour
     //Audioclips
     [SerializeField]
     private AudioClip[] _audioClips;
-    //AudioSource for trigger sounds
-    private AudioSource _triggerAudioSource;
+    //AudioSource for proper trigger sounds
+    private AudioSource _properAudioSource;
     //AudioSource for constant movement sounds
     private AudioSource _movementAudioSource;
     private bool _isBoosting;
@@ -77,11 +74,10 @@ public class Player : MonoBehaviour
 
         _spawnManager = GameObject.Find("Spawn_Manager").GetComponent<SpawnManager>();
         _uiManager = GameObject.Find("Canvas").GetComponent<UIManager>();
-        _triggerAudioSource = GameObject.Find("Trigger_Sounds").GetComponent<AudioSource>();
+        _properAudioSource = GetComponent<AudioSource>();
         _movementAudioSource = GameObject.Find("Player_Movement_Sounds").GetComponent<AudioSource>();
 
         _maxThrusterEnergy = _thrusterEnergy;
-        //_rb = GetComponent<Rigidbody2D>();
 
         if (_spawnManager is null)
         {
@@ -93,7 +89,7 @@ public class Player : MonoBehaviour
             Debug.LogError("The UI Manager is NULL");
         }
 
-        if(_triggerAudioSource is null)
+        if(_properAudioSource is null)
         {
             Debug.LogError("Trigger Audio Source is NULL");
         }
@@ -194,11 +190,6 @@ public class Player : MonoBehaviour
                 _uiManager.UpdateThresholdEnergy(_currentBoost, _maxBoost);
             }
         }
-
-        //Movement with rigidbody
-        //Vector3 dir = new Vector3(0, vInput, 0);
-        //_rb.AddForce(transform.up.normalized * vInput * _speed);
-        //transform.Rotate(0, 0, -hInput * _rotationSpeed);
     }
 
     IEnumerator ThrusterNeedsBreak()
@@ -234,9 +225,6 @@ public class Player : MonoBehaviour
         {
             transform.position = new Vector3(transform.position.x, _yLimit * (transform.position.y > _yLimit ? -1 : 1), 0);
         }
-
-        // Stop on limits
-        //transform.position = new Vector3(Mathf.Clamp(transform.position.x, -_xLimit, _xLimit), Mathf.Clamp(transform.position.y, -_yLimit, _yLimit), 0);
     }
 
     ////////////////////////////////
@@ -395,8 +383,8 @@ public class Player : MonoBehaviour
     {
         if(index < _audioClips.Length && index >= 0)
         {
-            _triggerAudioSource.clip = _audioClips[index];
-            _triggerAudioSource.Play();
+            _properAudioSource.clip = _audioClips[index];
+            _properAudioSource.Play();
         }
     }
 

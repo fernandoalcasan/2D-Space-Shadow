@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: -5397638833901992187}
   - component: {fileID: -5386973495838791347}
   - component: {fileID: 832790820492111635}
-  - component: {fileID: 869583459241541468}
+  - component: {fileID: -6420866389614805204}
   m_Layer: 0
   m_Name: Asteroid
   m_TagString: Untagged
@@ -207,7 +207,7 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorControllerStateOnDisable: 0
---- !u!82 &869583459241541468
+--- !u!82 &-6420866389614805204
 AudioSource:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}

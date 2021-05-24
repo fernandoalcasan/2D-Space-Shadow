@@ -29,14 +29,14 @@ public class Enemy : MonoBehaviour
     [SerializeField]
     private AudioClip[] _audioClips;
     //AudioSource
-    private AudioSource _audioSource;
+    private AudioSource _properAudioSource;
 
     void Start()
     {
         SetNewPos();
         _player = GameObject.Find("Player").GetComponent<Player>();
         _anim = GetComponent<Animator>();
-        _audioSource = GetComponent<AudioSource>();
+        _properAudioSource = GetComponent<AudioSource>();
 
         if (_player is null)
         {
@@ -48,7 +48,7 @@ public class Enemy : MonoBehaviour
             Debug.LogError("The animator is NULL");
         }
 
-        if (_audioSource is null)
+        if (_properAudioSource is null)
         {
             Debug.LogError("AudioSource is NULL");
         }
@@ -155,8 +155,8 @@ public class Enemy : MonoBehaviour
     {
         if (index < _audioClips.Length && index >= 0)
         {
-            _audioSource.clip = _audioClips[index];
-            _audioSource.Play();
+            _properAudioSource.clip = _audioClips[index];
+            _properAudioSource.Play();
         }
     }
 
