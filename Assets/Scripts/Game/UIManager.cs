@@ -25,6 +25,10 @@ public class UIManager : MonoBehaviour
     [SerializeField]
     private Text _restartText;
 
+    // extra lives text
+    [SerializeField]
+    private Text _extraLivesText;
+
     //Game Manager reference
     private GameManager _gameManager;
 
@@ -89,9 +93,14 @@ public class UIManager : MonoBehaviour
 
     public void UpdateLives(int lives)
     {
-        if(lives >= 0)
+        if(lives >= 0 && lives <= 3)
         {
             _livesImg.sprite = _liveSprites[lives];
+            _extraLivesText.text = "";
+        }
+        else
+        {
+            _extraLivesText.text = "+" + (lives - 3);
         }
     }
 

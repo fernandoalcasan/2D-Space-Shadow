@@ -9,7 +9,8 @@ public class Player : MonoBehaviour
     private float _speed = 5f;
     private float _speedBoost = 2f;
     [SerializeField]
-    private int _lives = 3;
+    private int _lives;
+    private int _maxLives = 3;
     private int _score;
 
     //thruster properties
@@ -26,7 +27,7 @@ public class Player : MonoBehaviour
     [SerializeField]
     private float _fireDelay = 0.2f;
     private float _canShoot = -1f;
-    // 0 = triple shot, 1 = speed boost, 2 = shield
+    // 0 = triple shot, 1 = speed refill, 2 = shield, 3 = extra life
     private bool[] _powerupsEnabled;
 
     //bounds of field
@@ -69,16 +70,17 @@ public class Player : MonoBehaviour
         // Set the player position = 0
         transform.position = new Vector3(0, 0, 0);
         
-        _powerupsEnabled = new bool[3];
+        _powerupsEnabled = new bool[4];
 
         _spawnManager = GameObject.Find("Spawn_Manager").GetComponent<SpawnManager>();
         _uiManager = GameObject.Find("Canvas").GetComponent<UIManager>();
         _properAudioSource = GetComponent<AudioSource>();
         _movementAudioSource = GameObject.Find("Player_Movement_Sounds").GetComponent<AudioSource>();
+        _shieldBehavior = _shield.GetComponent<Shield>();
 
         _maxThrusterEnergy = _thrusterEnergy;
 
-        _shieldBehavior = _shield.GetComponent<Shield>();
+        _lives = _maxLives;
 
         if (_spawnManager is null)
         {
@@ -276,21 +278,11 @@ public class Player : MonoBehaviour
         //Play damage audio
         PlayTriggerAudio(1);
 
-        switch (quadrant)
+        if(_lives < _maxLives)
         {
-            //right quadrants
-            case 1: case 4:
-                _damage[1].SetActive(true);
-                break;
-            //left quadrants
-            case 2: case 3:
-                _damage[0].SetActive(true);
-                break;
-            default:
-                Debug.LogError("Quadrant not found");
-                break;
+            ActivateDamageVisualizer(quadrant);
         }
-
+        
         if (_lives < 1)
         {
             //Play explosion audio
@@ -298,6 +290,38 @@ public class Player : MonoBehaviour
             _spawnManager.OnPlayerDeath();
             _uiManager.OnPlayerDeath();
             Destroy(gameObject);
+        }
+    }
+
+    void ActivateDamageVisualizer(int quadrant)
+    {
+        switch (quadrant)
+        {
+            //right quadrants
+            case 1: case 4:
+                if(_damage[1].activeSelf)
+                {
+                    _damage[0].SetActive(true);
+                }
+                else
+                {
+                    _damage[1].SetActive(true);
+                }
+                break;
+            //left quadrants
+            case 2: case 3:
+                if (_damage[0].activeSelf)
+                {
+                    _damage[1].SetActive(true);
+                }
+                else
+                {
+                    _damage[0].SetActive(true);
+                }
+                break;
+            default:
+                Debug.LogError("Quadrant not found");
+                break;
         }
     }
 
@@ -354,8 +378,15 @@ public class Player : MonoBehaviour
                         _shield.SetActive(true);
                     }
                     break;
+                case 3: //extra life
+                    _lives++;
+                    _uiManager.UpdateLives(_lives);
+                    RestoreHealthVisualizer();
+                    break;
             }
+
             _powerupsEnabled[power] = true;
+
             if(time > 0f) //if the powerup is temporary
             {
                 StartCoroutine(DisableTempPowerup(power, time));
@@ -364,6 +395,18 @@ public class Player : MonoBehaviour
         else
         {
             Debug.LogError("Index out of bounds");
+        }
+    }
+
+    void RestoreHealthVisualizer()
+    {
+        for (int i = 0; i < _damage.Length; i++)
+        {
+            if(_damage[i].activeSelf)
+            {
+                _damage[i].SetActive(false);
+                return;
+            }
         }
     }
 
