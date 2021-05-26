@@ -46,7 +46,7 @@ public class SpawnManager : MonoBehaviour
         while (!_doNotSpawn)
         {
             Vector3 initPos = new Vector3(Random.Range(-_xLimit, _xLimit), _yLimit, 0);
-            int randomPowerup = Random.Range(0, 4);
+            int randomPowerup = Random.Range(0, _powerups.Length);
             Instantiate(_powerups[randomPowerup], initPos, Quaternion.identity);
             yield return new WaitForSeconds(Random.Range(5f, 10f));
         }
@@ -61,5 +61,10 @@ public class SpawnManager : MonoBehaviour
     public void OnPlayerDeath()
     {
         _doNotSpawn = true;
+    }
+
+    public int PowerupsAvailable()
+    {
+        return _powerups.Length;
     }
 }

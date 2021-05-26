@@ -272,6 +272,7 @@ MonoBehaviour:
   - {fileID: 2995476574837496918, guid: 6d6d079eb1aea1c48a5d3b73d7809199, type: 3}
   - {fileID: 4929429721902606149, guid: b10a7560f0746774cbcbeac89af77da1, type: 3}
   - {fileID: 3187179708257009220, guid: 1c1f88fd33964b548bc8859a187d9176, type: 3}
+  - {fileID: 6758679185029775946, guid: d7a5158c71e0ef242a1336993d54b828, type: 3}
   _enemyContainer: {fileID: 358413938}
 --- !u!4 &128208967
 Transform:
@@ -1723,6 +1724,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _speed: 5
   _maxLives: 3
+  _magazine: 15
   _thrusterEnergy: 100
   _fireDelay: 0.2
   _laser: {fileID: 3257339953780460438, guid: 34f0e149d003986468269c7b3e3b1d79, type: 3}

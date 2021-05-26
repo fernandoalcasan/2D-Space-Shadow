@@ -69,6 +69,9 @@ public class Powerup : MonoBehaviour
                     case 3: //extra life
                         player.EnablePowerup(_powerID, -1f);
                         break;
+                    case 4: //Ammo refill
+                        player.EnablePowerup(_powerID, -1f);
+                        break;
                 }
             }
             AudioSource.PlayClipAtPoint(_collectedAudio, Camera.main.transform.position);

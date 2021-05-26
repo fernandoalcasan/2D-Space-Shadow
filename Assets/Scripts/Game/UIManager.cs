@@ -61,6 +61,7 @@ public class UIManager : MonoBehaviour
     void Start()
     {
         _scoreText.text = "Score: 0";
+        _ammoText.text = "x15";
         _gameOverText.gameObject.SetActive(false);
         _gameManager = GameObject.Find("Game_Manager").GetComponent<GameManager>();
         _thresholdAnim = GameObject.Find("Threshold_img").GetComponent<Animator>();

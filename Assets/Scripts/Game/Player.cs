@@ -12,7 +12,9 @@ public class Player : MonoBehaviour
     [SerializeField]
     private int _maxLives = 3;
     private int _score;
+    [SerializeField]
     private int _magazine = 15;
+    private int _maxMagazine;
 
     //thruster properties
     [SerializeField]
@@ -69,8 +71,6 @@ public class Player : MonoBehaviour
     {
         // Set the player position = 0
         transform.position = new Vector3(0, 0, 0);
-        
-        _powerupsEnabled = new bool[4];
 
         _spawnManager = GameObject.Find("Spawn_Manager").GetComponent<SpawnManager>();
         _uiManager = GameObject.Find("Canvas").GetComponent<UIManager>();
@@ -79,6 +79,7 @@ public class Player : MonoBehaviour
         _shieldBehavior = _shield.GetComponent<Shield>();
 
         _maxThrusterEnergy = _thrusterEnergy;
+        _maxMagazine = _magazine;
 
         if (_spawnManager is null)
         {
@@ -104,6 +105,9 @@ public class Player : MonoBehaviour
         {
             Debug.LogError("Shield script is NULL");
         }
+
+        //initialize with the number of powerups in the game;
+        _powerupsEnabled = new bool[_spawnManager.PowerupsAvailable()];
 
         _lives = _maxLives;
         _uiManager.UpdateLives(_lives);
@@ -394,6 +398,10 @@ public class Player : MonoBehaviour
                     _lives++;
                     _uiManager.UpdateLives(_lives);
                     RestoreHealthVisualizer();
+                    break;
+                case 4: //ammo refill
+                    _magazine = _maxMagazine;
+                    _uiManager.UpdateAmmo(_magazine);
                     break;
             }
 
