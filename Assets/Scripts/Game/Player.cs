@@ -8,8 +8,8 @@ public class Player : MonoBehaviour
     [SerializeField]
     private float _speed = 5f;
     private float _speedBoost = 2f;
-    [SerializeField]
     private int _lives;
+    [SerializeField]
     private int _maxLives = 3;
     private int _score;
 
@@ -80,8 +80,6 @@ public class Player : MonoBehaviour
 
         _maxThrusterEnergy = _thrusterEnergy;
 
-        _lives = _maxLives;
-
         if (_spawnManager is null)
         {
             Debug.LogError("The spawn manager is NULL");
@@ -106,6 +104,9 @@ public class Player : MonoBehaviour
         {
             Debug.LogError("Shield script is NULL");
         }
+
+        _lives = _maxLives;
+        _uiManager.UpdateLives(_lives);
     }
 
     void Update()
@@ -278,7 +279,8 @@ public class Player : MonoBehaviour
         //Play damage audio
         PlayTriggerAudio(1);
 
-        if(_lives < _maxLives)
+        //If lives are less or equal to the number of damage visualizers
+        if(_lives <= _damage.Length)
         {
             ActivateDamageVisualizer(quadrant);
         }

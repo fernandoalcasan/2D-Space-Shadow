@@ -16,6 +16,9 @@ public class Enemy : MonoBehaviour
     private float _fireDelay = 3f;
     private float _canShoot = -1f;
 
+    //dead trigger
+    private bool _dead;
+
     [SerializeField]
     private GameObject _enemyLaser;
 
@@ -58,7 +61,7 @@ public class Enemy : MonoBehaviour
     {
         MoveEnemy();
 
-        if (Time.time > _canShoot)
+        if (Time.time > _canShoot && !_dead)
         {
             ShootLaser();
         }
@@ -76,7 +79,7 @@ public class Enemy : MonoBehaviour
         _canShoot = Time.time + _fireDelay;
 
         //Choose the side of the laser shoot
-        Vector3 laserSide =transform.position - (transform.up * 1.33f) + (Vector3.right * (Random.Range(0,2) == 0 ? 0.184f : -0.184f));
+        Vector3 laserSide = transform.position - (transform.up * 1.33f) + (Vector3.right * (Random.Range(0,2) == 0 ? 0.184f : -0.184f));
         GameObject laser = Instantiate(_enemyLaser, laserSide, transform.rotation);
         
         //Set the laser as enemy's to change the behavior
@@ -121,6 +124,7 @@ public class Enemy : MonoBehaviour
             PlayAudio(0);
             int dir = _player.GetDamageDirection(transform.position);
             _player.GetDamage(dir);
+            _player.IncreaseScore(10);
             DeathSequence();
         }
         //Collition with Laser
@@ -142,6 +146,7 @@ public class Enemy : MonoBehaviour
     {
         //to avoid making damage again while doing animation
         Destroy(GetComponent<Collider2D>());
+        _dead = true;
         _anim.SetTrigger("OnEnemyDeath");
         _speed = 0f;
         Destroy(gameObject, 1.19f);
