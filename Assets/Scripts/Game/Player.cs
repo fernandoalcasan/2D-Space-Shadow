@@ -12,6 +12,7 @@ public class Player : MonoBehaviour
     [SerializeField]
     private int _maxLives = 3;
     private int _score;
+    private int _magazine = 15;
 
     //thruster properties
     [SerializeField]
@@ -27,8 +28,10 @@ public class Player : MonoBehaviour
     [SerializeField]
     private float _fireDelay = 0.2f;
     private float _canShoot = -1f;
+
     // 0 = triple shot, 1 = speed refill, 2 = shield, 3 = extra life
     private bool[] _powerupsEnabled;
+    private bool _isBoosting;
 
     //bounds of field
     private float _xLimit = 10f;
@@ -60,10 +63,7 @@ public class Player : MonoBehaviour
     //AudioSource for proper trigger sounds
     private AudioSource _properAudioSource;
     //AudioSource for constant movement sounds
-    private AudioSource _movementAudioSource;
-    private bool _isBoosting;
-
-    
+    private AudioSource _movementAudioSource;    
 
     void Start()
     {
@@ -242,6 +242,13 @@ public class Player : MonoBehaviour
 
     void ShootLaser()
     {
+        if(_magazine <= 0)
+        {
+            //Play empty mag audio
+            PlayTriggerAudio(5);
+            return;
+        }
+
         //Update delay time for laser
         _canShoot = Time.time + _fireDelay;
 
@@ -256,6 +263,9 @@ public class Player : MonoBehaviour
 
         //Play laser audio
         PlayTriggerAudio(0);
+
+        _magazine--;
+        _uiManager.UpdateAmmo(_magazine);
     }
 
     ////////////////////////////////

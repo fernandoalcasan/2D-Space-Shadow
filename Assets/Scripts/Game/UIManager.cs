@@ -29,6 +29,10 @@ public class UIManager : MonoBehaviour
     [SerializeField]
     private Text _extraLivesText;
 
+    //Ammo text
+    [SerializeField]
+    private Text _ammoText;
+
     //Game Manager reference
     private GameManager _gameManager;
 
@@ -122,6 +126,11 @@ public class UIManager : MonoBehaviour
                 _thrusterBarFill.color = Color.green;
                 break;
         }
+    }
+
+    public void UpdateAmmo(int value)
+    {
+        _ammoText.text = "x" + value;
     }
 
     public void UpdateThresholdEnergy(float value, float maxValue)
