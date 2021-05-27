@@ -55,6 +55,9 @@ public class Player : MonoBehaviour
     // ui manager connection
     private UIManager _uiManager;
 
+    // Camera shake reference
+    private CameraShake _camShake;
+
     //Damage VFX objects
     [SerializeField]
     private GameObject[] _damage = new GameObject[2];
@@ -77,6 +80,7 @@ public class Player : MonoBehaviour
         _properAudioSource = GetComponent<AudioSource>();
         _movementAudioSource = GameObject.Find("Player_Movement_Sounds").GetComponent<AudioSource>();
         _shieldBehavior = _shield.GetComponent<Shield>();
+        _camShake = Camera.main.GetComponent<CameraShake>();
 
         _maxThrusterEnergy = _thrusterEnergy;
         _maxMagazine = _magazine;
@@ -104,6 +108,11 @@ public class Player : MonoBehaviour
         if (_shieldBehavior is null)
         {
             Debug.LogError("Shield script is NULL");
+        }
+
+        if(_camShake is null)
+        {
+            Debug.LogError("ShakeCamera script is NULL");
         }
 
         //initialize with the number of powerups in the game;
@@ -293,8 +302,11 @@ public class Player : MonoBehaviour
         //Play damage audio
         PlayTriggerAudio(1);
 
+        //shake camera
+        StartCoroutine(_camShake.ShakeCamera());
+
         //If lives are less or equal to the number of damage visualizers
-        if(_lives <= _damage.Length)
+        if (_lives <= _damage.Length)
         {
             ActivateDamageVisualizer(quadrant);
         }
