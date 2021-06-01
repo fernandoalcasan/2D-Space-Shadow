@@ -79,11 +79,8 @@ public class Enemy : MonoBehaviour
         _canShoot = Time.time + _fireDelay;
 
         //Choose the side of the laser shoot
-        Vector3 laserSide = transform.position - (transform.up * 1.33f) + (Vector3.right * (Random.Range(0,2) == 0 ? 0.184f : -0.184f));
+        Vector3 laserSide = transform.position + (Vector3.right * (Random.Range(0,2) == 0 ? 0.184f : -0.184f));
         GameObject laser = Instantiate(_enemyLaser, laserSide, transform.rotation);
-        
-        //Set the laser as enemy's to change the behavior
-        laser.GetComponent<Laser>().SetEnemyLaser();
         
         //Laser AUDIO
         PlayAudio(1);

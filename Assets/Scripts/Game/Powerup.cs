@@ -8,6 +8,16 @@ public class Powerup : MonoBehaviour
     [SerializeField]
     private float _speed = 3f;
 
+    public enum RaritySelector
+    {
+        Common,
+        Rare,
+        Very_Rare
+    }
+
+    [SerializeField]
+    private RaritySelector _rarity;
+
     //Space Limits
     private float _xLimit = 10f;
     private float _yLimit = 6.5f;
@@ -28,6 +38,15 @@ public class Powerup : MonoBehaviour
     void Update()
     {
         MovePowerup();
+    }
+
+    ////////////////////////////////
+    //PROPERTIES////////////////////
+    ////////////////////////////////
+
+    public RaritySelector GetRarity()
+    {
+        return _rarity;
     }
 
     ////////////////////////////////
@@ -71,6 +90,9 @@ public class Powerup : MonoBehaviour
                         break;
                     case 4: //Ammo refill
                         player.EnablePowerup(_powerID, -1f);
+                        break;
+                    case 5: //Multidirectional shot
+                        player.EnablePowerup(_powerID, 5f);
                         break;
                 }
             }

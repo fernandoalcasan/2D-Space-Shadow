@@ -31,19 +31,21 @@ public class Player : MonoBehaviour
     private float _fireDelay = 0.2f;
     private float _canShoot = -1f;
 
-    // 0 = triple shot, 1 = speed refill, 2 = shield, 3 = extra life
-    private bool[] _powerupsEnabled;
+    //thrusters use
     private bool _isBoosting;
 
     //bounds of field
     private float _xLimit = 10f;
     private float _yLimit = 5.5f;
 
-    //prefabs for laser
+    //prefabs for shots
+    [SerializeField]
+    private GameObject[] _shots;
     [SerializeField]
     private GameObject _laser;
     [SerializeField]
     private GameObject _tripleLaser;
+    private GameObject _currentShot;
 
     //prefab for shield
     [SerializeField]
@@ -115,10 +117,8 @@ public class Player : MonoBehaviour
             Debug.LogError("ShakeCamera script is NULL");
         }
 
-        //initialize with the number of powerups in the game;
-        _powerupsEnabled = new bool[_spawnManager.PowerupsAvailable()];
-
         _lives = _maxLives;
+        _currentShot = _shots[0];
         _uiManager.UpdateLives(_lives);
     }
 
@@ -262,23 +262,41 @@ public class Player : MonoBehaviour
             return;
         }
 
-        //Update delay time for laser
-        _canShoot = Time.time + _fireDelay;
-
-        if(_powerupsEnabled[0])
-        {
-            Instantiate(_tripleLaser, transform.position, transform.rotation);
-        }
-        else
-        {
-            Instantiate(_laser, transform.position + transform.up, transform.rotation);
-        }
-
-        //Play laser audio
+        Instantiate(_currentShot, transform.position, transform.rotation);
+        UpdateFireRate();
+        UpdateAmmo(--_magazine);
         PlayTriggerAudio(0);
+    }
 
-        _magazine--;
+    void UpdateFireRate()
+    {
+        //Update delay time to shoot again
+        _canShoot = Time.time + _fireDelay;
+    }
+    
+    void UpdateAmmo(int value)
+    {
+        _magazine = value;
         _uiManager.UpdateAmmo(_magazine);
+    }
+
+    void SetCurrentShot(int index)
+    {
+        _currentShot = _shots[index];
+        SetCurrentShotBehavior(index);
+    }
+
+    void SetCurrentShotBehavior(int index)
+    {
+        SetShotFireRate(index);
+    }
+
+    void SetShotFireRate(int index)
+    {
+        if (_shots[index].TryGetComponent<ForwardShot>(out var forwardShot))
+        {
+            _fireDelay = forwardShot.GetFireRate();
+        }
     }
 
     ////////////////////////////////
@@ -288,11 +306,10 @@ public class Player : MonoBehaviour
     public void GetDamage(int quadrant)
     {
         // if shield is active
-        if (_powerupsEnabled[2])
+        if (_shield.activeSelf)
         {
             bool stillsActive = _shieldBehavior.DamageShield();
             _shield.SetActive(stillsActive);
-            _powerupsEnabled[2] = stillsActive;
             return;
         }
         
@@ -383,54 +400,51 @@ public class Player : MonoBehaviour
 
     public void EnablePowerup(int power, float time)
     {
-        if(power < _powerupsEnabled.Length && power >= 0)
+        switch (power)
         {
-            switch(power)
-            {
-                case 1:// thruster energy unit refill
-                    _thrusterEnergy += _maxBoost;
-                    if(_thrusterEnergy > _maxThrusterEnergy)
-                    {
-                        _thrusterEnergy = _maxThrusterEnergy;
-                    }
-                    _uiManager.UpdateBarEnergy(_thrusterEnergy, _maxThrusterEnergy);
-                    _canBoost = true;
-                    break;
-                case 2: // shield
-                    if (_powerupsEnabled[power]) //shield is active already
-                    {
-                        _shieldBehavior.RestoreShield();
-                    }
-                    else
-                    {
-                        _shield.SetActive(true);
-                    }
-                    break;
-                case 3: //extra life
-                    _lives++;
-                    _uiManager.UpdateLives(_lives);
-                    RestoreHealthVisualizer();
-                    break;
-                case 4: //ammo refill
-                    _magazine = _maxMagazine;
-                    _uiManager.UpdateAmmo(_magazine);
-                    break;
-            }
-
-            _powerupsEnabled[power] = true;
-
-            if(time > 0f) //if the powerup is temporary
-            {
-                StartCoroutine(DisableTempPowerup(power, time));
-            }
+            case 0: //Triple shot
+                SetCurrentShot(1);
+                break;
+            case 1:// thruster energy unit refill
+                _thrusterEnergy += _maxBoost;
+                if (_thrusterEnergy > _maxThrusterEnergy)
+                {
+                    _thrusterEnergy = _maxThrusterEnergy;
+                }
+                _uiManager.UpdateBarEnergy(_thrusterEnergy, _maxThrusterEnergy);
+                _canBoost = true;
+                break;
+            case 2: // shield
+                if (_shield.activeSelf)
+                {
+                    _shieldBehavior.RestoreShield();
+                }
+                else
+                {
+                    _shield.SetActive(true);
+                }
+                break;
+            case 3: //extra life
+                _lives++;
+                _uiManager.UpdateLives(_lives);
+                RestoreOneHealthVisualizer();
+                break;
+            case 4: //ammo refill
+                _magazine = _maxMagazine;
+                _uiManager.UpdateAmmo(_magazine);
+                break;
+            case 5: //Multidirectional shot
+                SetCurrentShot(2);
+                break;
         }
-        else
+
+        if (time > 0f) //if the powerup is temporary
         {
-            Debug.LogError("Index out of bounds");
+            StartCoroutine(DisableTempPowerup(power, time));
         }
     }
 
-    void RestoreHealthVisualizer()
+    void RestoreOneHealthVisualizer()
     {
         for (int i = 0; i < _damage.Length; i++)
         {
@@ -447,11 +461,11 @@ public class Player : MonoBehaviour
         yield return new WaitForSeconds(time);
         switch(power)
         {
-            case 1:
-                _speed /= _speedBoost;
+            case 0: //triple shot
+            case 5: //Multidirectional shot
+                SetCurrentShot(0);
                 break;
         }
-        _powerupsEnabled[power] = false;
     }
 
     ////////////////////////////////

@@ -50,7 +50,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _speed: 4
   _fireDelay: 3
-  _enemyLaser: {fileID: 3257339953780460438, guid: 34f0e149d003986468269c7b3e3b1d79, type: 3}
+  _enemyLaser: {fileID: 3257339953780460438, guid: 8c59899cf57c9924c961f1c61fc0bda5, type: 3}
   _audioClips:
   - {fileID: 8300000, guid: a885c043fab7e46438bba03ba9dab6bc, type: 3}
   - {fileID: 8300000, guid: 75676f361bdfeaf41a46623e95df3dbc, type: 3}

@@ -8,9 +8,10 @@ public class SpawnManager : MonoBehaviour
     [SerializeField]
     private GameObject _enemy;
 
-    //prefabs of the powerups
+    //prefabs of the powerups: 0 = triple shot, 1 = speed refill, 2 = shield, 3 = extra life, 4 = ammo refill, 5 = MD shot 
     [SerializeField]
     private GameObject[] _powerups;
+    private List<GameObject> _common, _rare, _veryRare;
 
     //to store the instances of enemies
     [SerializeField]
@@ -23,10 +24,47 @@ public class SpawnManager : MonoBehaviour
     //to check if spawning is active
     private bool _doNotSpawn = false;
 
-    void Start()
+    private void Start()
     {
-
+        InitializePowerups();
     }
+
+    ////////////////////////////////
+    //PROPERTIES////////////////////
+    ////////////////////////////////
+
+    void InitializePowerups()
+    {
+        _common = new List<GameObject>();
+        _rare = new List<GameObject>();
+        _veryRare = new List<GameObject>();
+        for (int i = 0; i < _powerups.Length; i++)
+        {
+            if (_powerups[i].TryGetComponent<Powerup>(out var PowerupRef))
+            {
+                switch (PowerupRef.GetRarity())
+                {
+                    case Powerup.RaritySelector.Common:
+                        _common.Add(_powerups[i]);
+                        break;
+                    case Powerup.RaritySelector.Rare:
+                        _rare.Add(_powerups[i]);
+                        break;
+                    case Powerup.RaritySelector.Very_Rare:
+                        _veryRare.Add(_powerups[i]);
+                        break;
+                }
+            }
+            else
+            {
+                Debug.LogError("Powerup Script component is NULL");
+            }
+        }
+    }
+
+    ////////////////////////////////
+    //SPAWNING//////////////////////
+    ////////////////////////////////
 
     IEnumerator SpawnEnemies()
     {
@@ -46,9 +84,29 @@ public class SpawnManager : MonoBehaviour
         while (!_doNotSpawn)
         {
             Vector3 initPos = new Vector3(Random.Range(-_xLimit, _xLimit), _yLimit, 0);
-            int randomPowerup = Random.Range(0, _powerups.Length);
-            Instantiate(_powerups[randomPowerup], initPos, Quaternion.identity);
+            Instantiate(ChoosePowerupToSpawn(), initPos, Quaternion.identity);
+
             yield return new WaitForSeconds(Random.Range(5f, 10f));
+        }
+    }
+
+    GameObject ChoosePowerupToSpawn()
+    {
+        //Common rarity gets 60%
+        //Rare gets 30%
+        //Very Rare gets 10%
+        
+        float levelProb = Random.value;
+        switch(levelProb)
+        {
+            case float prob when (prob <= .6f): //common
+                return _common[Random.Range(0, _common.Count)];
+            case float prob when (prob <= .9f): //rare
+                return _rare[Random.Range(0, _rare.Count)];
+            case float prob when (prob <= 1f): //very rare
+                return _veryRare[Random.Range(0, _veryRare.Count)];
+            default:
+                return null;
         }
     }
 
@@ -58,13 +116,12 @@ public class SpawnManager : MonoBehaviour
         StartCoroutine(SpawnPowerups());
     }
 
+    ////////////////////////////////
+    //ONDESTROY/////////////////////
+    ////////////////////////////////
+
     public void OnPlayerDeath()
     {
         _doNotSpawn = true;
-    }
-
-    public int PowerupsAvailable()
-    {
-        return _powerups.Length;
     }
 }

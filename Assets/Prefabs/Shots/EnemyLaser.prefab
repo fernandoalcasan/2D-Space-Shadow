@@ -12,9 +12,9 @@ GameObject:
   - component: {fileID: 4039004820662765776}
   - component: {fileID: 2961900656344091287}
   - component: {fileID: 6980011022048044323}
-  - component: {fileID: -1057548215424468493}
+  - component: {fileID: 8819937492225153433}
   m_Layer: 0
-  m_Name: Laser
+  m_Name: EnemyLaser
   m_TagString: SimpleLaser
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -75,7 +75,7 @@ SpriteRenderer:
   m_SortingLayer: 2
   m_SortingOrder: 0
   m_Sprite: {fileID: 21300000, guid: b030d335857201646be69703e678d6e5, type: 3}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 1, g: 0.98888004, b: 0, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -132,7 +132,7 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 0
---- !u!114 &-1057548215424468493
+--- !u!114 &8819937492225153433
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -146,10 +146,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _shot:
     _speed: 8
-    _isEnemyShot: 0
+    _isEnemyShot: 1
     _isMultiColor: 0
-    _fireRate: 0.2
-    _verticalOffset: 1
+    _fireRate: 3
+    _verticalOffset: -1.33
     _yLimit: 7
     _xLimit: 11
   _delayIfMulticolor: 0
