@@ -6,24 +6,16 @@ using UnityEngine;
 public class Shot
 {
     [Header("Shot Attributes")]
-    public float _speed;
-    public bool _isEnemyShot;
-    public bool _isMultiColor;
-    public float _fireRate;
-    public float _verticalOffset;
+    public float speed;
+    public bool isEnemyShot;
+    public bool isMultiColor;
+    public float fireRate;
+    public float verticalOffset;
+
+    [Header("Set delay if Multicolor")]
+    public float delayIfMulticolor;
 
     [Header("Space Bounds")]
-    public float _yLimit;
-    public float _xLimit;
-
-    public Shot(float speed, bool isEnemyShot, bool isMultiColor, float fireRate, float verticalOffset, Vector2 bounds)
-    {
-        _speed = speed;
-        _isEnemyShot = isEnemyShot;
-        _isMultiColor = isMultiColor;
-        _fireRate = fireRate;
-        _verticalOffset = verticalOffset;
-        _xLimit = bounds.x;
-        _yLimit = bounds.y;
-    }
+    public float yLimit;
+    public float xLimit;
 }

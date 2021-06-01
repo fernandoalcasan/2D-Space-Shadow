@@ -41,10 +41,6 @@ public class Player : MonoBehaviour
     //prefabs for shots
     [SerializeField]
     private GameObject[] _shots;
-    [SerializeField]
-    private GameObject _laser;
-    [SerializeField]
-    private GameObject _tripleLaser;
     private GameObject _currentShot;
 
     //prefab for shield
@@ -283,6 +279,7 @@ public class Player : MonoBehaviour
     void SetCurrentShot(int index)
     {
         _currentShot = _shots[index];
+        _uiManager.UpdateCurrentShot(index);
         SetCurrentShotBehavior(index);
     }
 

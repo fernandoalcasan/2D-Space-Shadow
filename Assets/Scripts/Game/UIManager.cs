@@ -29,9 +29,12 @@ public class UIManager : MonoBehaviour
     [SerializeField]
     private Text _extraLivesText;
 
-    //Ammo text
+    //Ammo
     [SerializeField]
     private Text _ammoText;
+    [SerializeField]
+    private Image[] _ammoImgs;
+    private int _currentAmmo;
 
     //Game Manager reference
     private GameManager _gameManager;
@@ -62,6 +65,7 @@ public class UIManager : MonoBehaviour
     {
         _scoreText.text = "Score: 0";
         _ammoText.text = "x15";
+        _currentAmmo = 0;
         _gameOverText.gameObject.SetActive(false);
         _gameManager = GameObject.Find("Game_Manager").GetComponent<GameManager>();
         _thresholdAnim = GameObject.Find("Threshold_img").GetComponent<Animator>();
@@ -152,6 +156,13 @@ public class UIManager : MonoBehaviour
         _restartText.gameObject.SetActive(true);
         StartCoroutine(GameOverEffect());
         _gameManager.GameOver();
+    }
+
+    public void UpdateCurrentShot(int index)
+    {
+        _ammoImgs[_currentAmmo].gameObject.SetActive(false);
+        _ammoImgs[index].gameObject.SetActive(true);
+        _currentAmmo = index;
     }
 
     IEnumerator GameOverEffect()

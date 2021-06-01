@@ -60,6 +60,11 @@ public class SpawnManager : MonoBehaviour
                 Debug.LogError("Powerup Script component is NULL");
             }
         }
+
+        if(_common.Count == 0 || _rare.Count == 0 || _veryRare.Count == 0)
+        {
+            Debug.Log("Please add at least one power-up of each rarity");
+        }
     }
 
     ////////////////////////////////

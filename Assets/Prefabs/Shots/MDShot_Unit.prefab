@@ -502,9 +502,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _shot:
-    _speed: 8
-    _isEnemyShot: 0
-    _isMultiColor: 1
-    _yLimit: 6.5
-    _xLimit: 11
-  _delayIfMulticolor: 0.1
+    speed: 8
+    isEnemyShot: 0
+    isMultiColor: 1
+    fireRate: 0
+    verticalOffset: 0
+    delayIfMulticolor: 0.1
+    yLimit: 6.5
+    xLimit: 11

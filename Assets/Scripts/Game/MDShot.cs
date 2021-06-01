@@ -4,10 +4,11 @@ using UnityEngine;
 
 public class MDShot : ForwardShot
 {
+    [Header("Pellet Shot prefab")]
     [SerializeField]
     private GameObject _mdPelletShot;
 
-    private void OnTriggerEnter2D(Collider2D other)
+    public override void OnTriggerEnter2D(Collider2D other)
     {
         if (other.CompareTag("Enemy"))
         {

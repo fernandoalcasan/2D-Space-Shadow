@@ -675,12 +675,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _shot:
-    _speed: 8
-    _isEnemyShot: 0
-    _isMultiColor: 1
-    _fireRate: 2
-    _verticalOffset: 1.15
-    _yLimit: 6.5
-    _xLimit: 11
-  _delayIfMulticolor: 0.1
+    speed: 8
+    isEnemyShot: 0
+    isMultiColor: 1
+    fireRate: 2
+    verticalOffset: 1.15
+    delayIfMulticolor: 0.1
+    yLimit: 6.5
+    xLimit: 11
   _mdPelletShot: {fileID: 5417606036050191683, guid: 49f2748540d51f54d8bcd10a16183611, type: 3}

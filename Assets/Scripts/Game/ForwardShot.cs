@@ -8,19 +8,16 @@ public class ForwardShot : MonoBehaviour
     private Shot _shot;
     private SpriteRenderer _sprite;
     
-    [Header("Set delay if Multicolor")]
-    [SerializeField]
-    private float _delayIfMulticolor;
     private WaitForSeconds _delay;
 
     void Start()
     {
         SetPos();
 
-        if(_shot._isMultiColor)
+        if(_shot.isMultiColor)
         {
             _sprite = GetComponent<SpriteRenderer>();
-            _delay = new WaitForSeconds(_delayIfMulticolor);
+            _delay = new WaitForSeconds(_shot.delayIfMulticolor);
 
             if (_sprite is null)
             {
@@ -35,13 +32,13 @@ public class ForwardShot : MonoBehaviour
 
     void Update()
     {
-        if (_shot._isEnemyShot)
+        if (_shot.isEnemyShot)
         {
-            transform.Translate(Vector3.down * _shot._speed * Time.deltaTime);
+            transform.Translate(Vector3.down * _shot.speed * Time.deltaTime);
         }
         else
         {
-            transform.Translate(Vector3.up * _shot._speed * Time.deltaTime);
+            transform.Translate(Vector3.up * _shot.speed * Time.deltaTime);
         }
 
         DestroyIfOutOfBounds();
@@ -53,7 +50,7 @@ public class ForwardShot : MonoBehaviour
     
     void SetPos()
     {
-        Vector3 newPos = new Vector3(transform.position.x, (transform.position.y + _shot._verticalOffset), transform.position.z);
+        Vector3 newPos = new Vector3(transform.position.x, (transform.position.y + _shot.verticalOffset), transform.position.z);
         transform.position = newPos;
     }
 
@@ -79,9 +76,9 @@ public class ForwardShot : MonoBehaviour
     //DAMAGE////////////////////////
     ////////////////////////////////
 
-    private void OnTriggerEnter2D(Collider2D other)
+    public virtual void OnTriggerEnter2D(Collider2D other)
     {
-        if (_shot._isEnemyShot && other.CompareTag("Player"))
+        if (_shot.isEnemyShot && other.CompareTag("Player"))
         {
             Player player = other.GetComponent<Player>();
             if (!(player is null))
@@ -99,7 +96,7 @@ public class ForwardShot : MonoBehaviour
 
     public float GetFireRate()
     {
-        return _shot._fireRate;
+        return _shot.fireRate;
     }
 
     ////////////////////////////////
@@ -125,8 +122,8 @@ public class ForwardShot : MonoBehaviour
 
     void DestroyIfOutOfBounds()
     {
-        if (transform.position.y > _shot._yLimit || transform.position.y < -_shot._yLimit
-            || transform.position.x > _shot._xLimit || transform.position.x < -_shot._xLimit)
+        if (transform.position.y > _shot.yLimit || transform.position.y < -_shot.yLimit
+            || transform.position.x > _shot.xLimit || transform.position.x < -_shot.xLimit)
         {
             DestroyShot();
         }
