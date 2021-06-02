@@ -11,6 +11,7 @@ public class Shot
     public bool isMultiColor;
     public float fireRate;
     public float verticalOffset;
+    public float horizontalOffset;
 
     [Header("Set delay if Multicolor")]
     public float delayIfMulticolor;

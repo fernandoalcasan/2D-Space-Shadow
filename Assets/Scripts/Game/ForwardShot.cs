@@ -12,7 +12,7 @@ public class ForwardShot : MonoBehaviour
 
     void Start()
     {
-        SetPos();
+        SetOffsetPos();
 
         if(_shot.isMultiColor)
         {
@@ -48,9 +48,23 @@ public class ForwardShot : MonoBehaviour
     //POSITION/////////////////////
     ////////////////////////////////
     
-    void SetPos()
+    void SetOffsetPos()
     {
-        Vector3 newPos = new Vector3(transform.position.x, (transform.position.y + _shot.verticalOffset), transform.position.z);
+        //Get the respective offsets to set the origin of the shot relative to the spaceship
+        Vector3 vertFix = transform.up * _shot.verticalOffset;
+        Vector3 horiFix = transform.right * _shot.horizontalOffset;
+
+        //The vertical offset is subtracted or added as the models for player and enemy are inverted (rotation)
+        if(_shot.isEnemyShot)
+        {
+            vertFix *= -1;
+
+            //Random sign is used in here as the enemy have 2 possible cannons to shoot (horizontally)
+            horiFix *= Random.value < 0.5f ? 1 : -1;
+        }
+
+        Vector3 newPos = transform.position + vertFix + horiFix;
+
         transform.position = newPos;
     }
 

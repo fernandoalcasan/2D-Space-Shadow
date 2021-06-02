@@ -9,12 +9,12 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4537899912496662082}
-  - component: {fileID: 1245709762936000}
   - component: {fileID: 4894902654677383300}
   - component: {fileID: 7560364814618402730}
   - component: {fileID: 5618414175982141445}
   - component: {fileID: 4577138981424331316}
   - component: {fileID: -5628800815096313536}
+  - component: {fileID: 8063869549163757240}
   m_Layer: 0
   m_Name: Enemy
   m_TagString: Enemy
@@ -36,24 +36,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1245709762936000
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 9041701021125875435}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4ddf6048cea783849a97bc0862be612e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _speed: 4
-  _fireDelay: 3
-  _enemyLaser: {fileID: 3257339953780460438, guid: 8c59899cf57c9924c961f1c61fc0bda5, type: 3}
-  _audioClips:
-  - {fileID: 8300000, guid: a885c043fab7e46438bba03ba9dab6bc, type: 3}
-  - {fileID: 8300000, guid: 75676f361bdfeaf41a46623e95df3dbc, type: 3}
 --- !u!212 &4894902654677383300
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -267,3 +249,27 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!114 &8063869549163757240
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9041701021125875435}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e619113ebee816c429b5e6f7d981251f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _enemy:
+    speed: 4
+    fireDelay: 3
+    scoreValue: 10
+    xLimit: 11
+    yLimit: 7
+    shot: {fileID: 3257339953780460438, guid: 8c59899cf57c9924c961f1c61fc0bda5, type: 3}
+    anim: {fileID: 0}
+    audioClips:
+    - {fileID: 8300000, guid: a885c043fab7e46438bba03ba9dab6bc, type: 3}
+    - {fileID: 8300000, guid: 75676f361bdfeaf41a46623e95df3dbc, type: 3}
+    properAudioSource: {fileID: 0}

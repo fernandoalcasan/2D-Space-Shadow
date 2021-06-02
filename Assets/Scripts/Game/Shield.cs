@@ -25,12 +25,6 @@ public class Shield : MonoBehaviour
         }
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
-
     public bool DamageShield()
     {
         _resistance--;
