@@ -116,6 +116,7 @@ public class Player : MonoBehaviour
         _lives = _maxLives;
         _currentShot = _shots[0];
         _uiManager.UpdateLives(_lives);
+        _uiManager.UpdateAmmo(_magazine);
     }
 
     void Update()
