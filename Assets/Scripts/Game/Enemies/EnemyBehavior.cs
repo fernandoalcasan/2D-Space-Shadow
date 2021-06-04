@@ -20,6 +20,7 @@ public class EnemyBehavior : MonoBehaviour
     private bool _dead;
 
     private Player _player;
+    private GameManager _gameManager;
 
     public virtual void Start()
     {
@@ -28,12 +29,18 @@ public class EnemyBehavior : MonoBehaviour
 
         _canShoot = _enemy.fireDelay;
         _player = GameObject.Find("Player").GetComponent<Player>();
+        _gameManager = GameObject.Find("Game_Manager").GetComponent<GameManager>();
         _enemy.anim = GetComponent<Animator>();
         _enemy.properAudioSource = GetComponent<AudioSource>();
 
         if (_player is null)
         {
             Debug.LogError("The Player is NULL");
+        }
+        
+        if (_gameManager is null)
+        {
+            Debug.LogError("The Game Manager is NULL");
         }
 
         if (_enemy.anim is null)
@@ -106,6 +113,7 @@ public class EnemyBehavior : MonoBehaviour
         //to avoid making damage again while doing animation
         Destroy(GetComponent<Collider2D>());
         _dead = true;
+        _gameManager.EnemyDestroyed();
         _enemy.anim.SetTrigger("OnEnemyDeath");
         Speed = 0f;
         Destroy(gameObject, 1.19f);

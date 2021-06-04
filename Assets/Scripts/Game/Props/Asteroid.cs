@@ -9,7 +9,7 @@ public class Asteroid : MonoBehaviour
     private bool _isAsteroidDestroyed;
 
     //spawn manager reference
-    private SpawnManager _spawnManager;
+    private GameManager _gameManager;
 
     //Animator reference
     private Animator _animator;
@@ -30,28 +30,25 @@ public class Asteroid : MonoBehaviour
         //set start position
         transform.position = new Vector3(0, 3f, 0);
 
-        _spawnManager = GameObject.Find("Spawn_Manager").GetComponent<SpawnManager>();
+        _gameManager = GameObject.Find("Game_Manager").GetComponent<GameManager>();
         _animator = GetComponent<Animator>();
         _player = GameObject.Find("Player").GetComponent<Player>();
         _properAudioSource = GetComponent<AudioSource>();
 
-        if (_spawnManager is null)
+        if (_gameManager is null)
         {
             Debug.LogError("The spawn manager is NULL");
         }
-
 
         if (_animator is null)
         {
             Debug.LogError("The animator is NULL");
         }
 
-
         if (_player is null)
         {
             Debug.LogError("The player is NULL");
         }
-
 
         if (_properAudioSource is null)
         {
@@ -107,7 +104,7 @@ public class Asteroid : MonoBehaviour
         //PLAY EXPLOSION AUDIO
         PlayAudio(0);
         _isAsteroidDestroyed = true;
-        _spawnManager.StartSpawning();
+        _gameManager.StartGame();
         _animator.SetTrigger("OnAsteroidBoom");
         Destroy(gameObject, 1.185f);
     }

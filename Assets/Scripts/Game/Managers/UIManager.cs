@@ -5,17 +5,10 @@ using UnityEngine.UI;
 
 public class UIManager : MonoBehaviour
 {
+    [Header("Text Elements")]
     // UI score text
     [SerializeField]
     private Text _scoreText;
-
-    //lives img
-    [SerializeField]
-    private Image _livesImg;
-
-    //array for sprites
-    [SerializeField]
-    private Sprite[] _liveSprites;
 
     // Game over ui text
     [SerializeField]
@@ -29,16 +22,31 @@ public class UIManager : MonoBehaviour
     [SerializeField]
     private Text _extraLivesText;
 
+    //Wave texts
+    [SerializeField]
+    private Text _waveText;
+    [SerializeField]
+    private Text _currentWaveText;
+    [SerializeField]
+    private Text _currentEnemiesText;
+
     //Ammo
     [SerializeField]
     private Text _ammoText;
+
+    [Header("Image Elements")]
     [SerializeField]
     private Image[] _ammoImgs;
     private int _currentAmmoImg;
     private int _maxAmmo;
 
-    //Game Manager reference
-    private GameManager _gameManager;
+    //lives img
+    [SerializeField]
+    private Image _livesImg;
+
+    //array for sprites
+    [SerializeField]
+    private Sprite[] _liveSprites;
 
     //Thruster bar mask reference
     [SerializeField]
@@ -54,9 +62,14 @@ public class UIManager : MonoBehaviour
 
     //Animator reference
     private Animator _thresholdAnim;
+    
+    //Game Manager reference
+    private GameManager _gameManager;
 
     //Audio Source & clips
     private AudioSource _uiAudioPlayer;
+
+    [Header("Audio Elements")]
     [SerializeField]
     private AudioClip[] _uiSounds;
 
@@ -152,7 +165,7 @@ public class UIManager : MonoBehaviour
     {
         _gameOverText.gameObject.SetActive(true);
         _restartText.gameObject.SetActive(true);
-        StartCoroutine(GameOverEffect());
+        StartTextAnimation(ref _gameOverText, -1f);
         _gameManager.GameOver();
     }
 
@@ -163,15 +176,46 @@ public class UIManager : MonoBehaviour
         _currentAmmoImg = index;
     }
 
-    IEnumerator GameOverEffect()
+    public void DisplayNewWave(string value, int enemies)
     {
-        while(true)
+        _waveText.gameObject.SetActive(true);
+        _waveText.text = value;
+        StartTextAnimation(ref _waveText, 3f);
+        
+        _currentWaveText.text = value;
+        UpdateWaveEnemies(enemies, enemies);
+    }
+
+    public void UpdateWaveEnemies(int value, int maxValue)
+    {
+        _currentEnemiesText.text = "Enemies: " + value + "/" + maxValue;
+    }
+
+    ////////////////////////////////
+    //ANIMATIONS////////////////////
+    ////////////////////////////////
+
+    void StartTextAnimation(ref Text toAnim, float duration)
+    {
+        if(toAnim.TryGetComponent<Animator>(out var anim))
         {
-            _gameOverText.text = "Game Over";
-            yield return new WaitForSeconds(0.3f);
-            _gameOverText.text = "";
-            yield return new WaitForSeconds(0.3f);
+            anim.SetTrigger("Start"); 
+            //If the animation was temporary, stop it
+            if(duration > 0f)
+            {
+                StartCoroutine(WaitFor(duration, isFinished => anim.SetTrigger("Stop")));
+            }
         }
+        else
+        {
+            Debug.LogError("Text animator is NULL");
+        }
+    }
+
+    IEnumerator WaitFor(float seconds, System.Action<bool> finished)
+    {
+        yield return new WaitForSeconds(seconds);
+        finished(true);
     }
 
     ////////////////////////////////

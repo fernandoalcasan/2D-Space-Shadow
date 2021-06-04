@@ -17,10 +17,6 @@ public class SpawnManager : MonoBehaviour
     [SerializeField]
     private GameObject _enemyContainer;
 
-    //Space Limits for powerup
-    private float _xLimit = 10f;
-    private float _yLimit = 6.5f;
-
     //to check if spawning is active
     private bool _doNotSpawn = false;
 
@@ -32,6 +28,12 @@ public class SpawnManager : MonoBehaviour
     ////////////////////////////////
     //PROPERTIES////////////////////
     ////////////////////////////////
+
+    public void SpawnNewWave(int num, float delay)
+    {
+        StartCoroutine(SpawnEnemies(num, delay));
+        StartCoroutine(SpawnPowerups());
+    }
 
     void InitializePowerups()
     {
@@ -71,25 +73,22 @@ public class SpawnManager : MonoBehaviour
     //SPAWNING//////////////////////
     ////////////////////////////////
 
-    IEnumerator SpawnEnemies()
+    IEnumerator SpawnEnemies(int enemies, float delayToSpawn)
     {
-        yield return new WaitForSeconds(2f);
-        while (!_doNotSpawn)
+        while (enemies > 0 && !_doNotSpawn)
         {
-            Vector3 xPosToSpawn = new Vector3(Random.Range(-_xLimit, _xLimit), 6, 0);
-            GameObject newEnemy = Instantiate(_enemy, xPosToSpawn, Quaternion.identity);
+            GameObject newEnemy = Instantiate(_enemy);
             newEnemy.transform.parent = _enemyContainer.transform;
-            yield return new WaitForSeconds(2f);
+            enemies--;
+            yield return new WaitForSeconds(delayToSpawn);
         }
     }
 
     IEnumerator SpawnPowerups()
     {
-        yield return new WaitForSeconds(2f);
         while (!_doNotSpawn)
         {
-            Vector3 initPos = new Vector3(Random.Range(-_xLimit, _xLimit), _yLimit, 0);
-            Instantiate(ChoosePowerupToSpawn(), initPos, Quaternion.identity);
+            Instantiate(ChoosePowerupToSpawn());
 
             yield return new WaitForSeconds(Random.Range(5f, 10f));
         }
@@ -113,12 +112,6 @@ public class SpawnManager : MonoBehaviour
             default:
                 return null;
         }
-    }
-
-    public void StartSpawning()
-    {
-        StartCoroutine(SpawnEnemies());
-        StartCoroutine(SpawnPowerups());
     }
 
     ////////////////////////////////
