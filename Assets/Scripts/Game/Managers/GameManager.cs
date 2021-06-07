@@ -83,6 +83,11 @@ public class GameManager : MonoBehaviour
         
         if(_currentEnemies == 0)
         {
+            if(_currentWave == _maxWaves)
+            {
+                //End Game
+                return;
+            }
             StartCoroutine(NextWave());
         }
     }
