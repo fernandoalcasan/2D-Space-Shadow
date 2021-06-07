@@ -94,6 +94,9 @@ public class Powerup : MonoBehaviour
                     case 5: //Multidirectional shot
                         player.EnablePowerup(_powerID, 5f);
                         break;
+                    case 6: //freeze player powerup
+                        player.EnablePowerup(_powerID, 2f);
+                        break;
                 }
             }
             AudioSource.PlayClipAtPoint(_collectedAudio, Camera.main.transform.position);

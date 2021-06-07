@@ -349,6 +349,7 @@ MonoBehaviour:
   - {fileID: 3187179708257009220, guid: 1c1f88fd33964b548bc8859a187d9176, type: 3}
   - {fileID: 6758679185029775946, guid: d7a5158c71e0ef242a1336993d54b828, type: 3}
   - {fileID: 6359596397399545171, guid: bac52ed9da456b3459c991e9d84dcb5b, type: 3}
+  - {fileID: 8388839927889685763, guid: 8f716cd68c8bd5e42b1c7d8504b3645b, type: 3}
   _enemyContainer: {fileID: 358413938}
 --- !u!4 &128208967
 Transform:
@@ -2088,6 +2089,7 @@ GameObject:
   - component: {fileID: 1063408638}
   - component: {fileID: 1063408641}
   - component: {fileID: 1063408642}
+  - component: {fileID: 1063408643}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -2325,6 +2327,25 @@ EdgeCollider2D:
   m_AdjacentEndPoint: {x: 0, y: 0}
   m_UseAdjacentStartPoint: 0
   m_UseAdjacentEndPoint: 0
+--- !u!95 &1063408643
+Animator:
+  serializedVersion: 3
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1063408637}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: c9a91ba8b1b046c469666001e4d9fd32, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorControllerStateOnDisable: 0
 --- !u!1 &1127365580
 GameObject:
   m_ObjectHideFlags: 0

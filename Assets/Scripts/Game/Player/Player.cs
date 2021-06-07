@@ -60,6 +60,9 @@ public class Player : MonoBehaviour
     [SerializeField]
     private GameObject[] _damage = new GameObject[2];
 
+    //Animations
+    private Animator _animator;
+
     //Audioclips
     [SerializeField]
     private AudioClip[] _audioClips;
@@ -78,6 +81,7 @@ public class Player : MonoBehaviour
         _properAudioSource = GetComponent<AudioSource>();
         _movementAudioSource = GameObject.Find("Player_Movement_Sounds").GetComponent<AudioSource>();
         _shieldBehavior = _shield.GetComponent<Shield>();
+        _animator = GetComponent<Animator>();
         _camShake = Camera.main.GetComponent<CameraShake>();
 
         _maxThrusterEnergy = _thrusterEnergy;
@@ -108,7 +112,12 @@ public class Player : MonoBehaviour
             Debug.LogError("Shield script is NULL");
         }
 
-        if(_camShake is null)
+        if (_animator is null)
+        {
+            Debug.LogError("Player animator is NULL");
+        }
+
+        if (_camShake is null)
         {
             Debug.LogError("ShakeCamera script is NULL");
         }
@@ -434,6 +443,10 @@ public class Player : MonoBehaviour
             case 5: //Multidirectional shot
                 SetCurrentShot(2);
                 break;
+            case 6: //freeze player powerup
+                _speed = 0f;
+                _animator.SetTrigger("Freeze");
+                break;
         }
 
         if (time > 0f) //if the powerup is temporary
@@ -462,6 +475,9 @@ public class Player : MonoBehaviour
             case 0: //triple shot
             case 5: //Multidirectional shot
                 SetCurrentShot(0);
+                break;
+            case 6: //Unfreeze player
+                _speed = 5f;
                 break;
         }
     }
