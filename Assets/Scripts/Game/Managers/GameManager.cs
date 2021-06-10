@@ -15,11 +15,18 @@ public class GameManager : MonoBehaviour
     private int _enemiesPerWave;
     private int _currentEnemies;
 
+    [SerializeField]
+    private float _delayToSpawnEnemy;
+    private float _currentDelay;
+    [SerializeField][Range(0f,1f)]
+    private float _reduceDelayPercentage;
+
     private UIManager _uiManager;
     private SpawnManager _spawnManager;
 
     private void Start()
     {
+        _currentDelay = _delayToSpawnEnemy;
         _uiManager = GameObject.Find("Canvas").GetComponent<UIManager>();
         _spawnManager = GameObject.Find("Spawn_Manager").GetComponent<SpawnManager>();
         
@@ -72,8 +79,12 @@ public class GameManager : MonoBehaviour
         }
         yield return new WaitForSeconds(3f);
 
-        float delayOfSpawn = 3f / (float)_currentWave;
-        _spawnManager.SpawnNewWave(_currentEnemies, delayOfSpawn);
+        _currentDelay -= (_currentDelay * _reduceDelayPercentage);
+
+        if (_currentDelay < 0f)
+            _currentDelay = 0;
+
+        _spawnManager.SpawnNewWave(_currentEnemies, _currentDelay);
     }
 
     public void EnemyDestroyed()

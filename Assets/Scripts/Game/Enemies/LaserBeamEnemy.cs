@@ -53,9 +53,7 @@ public class LaserBeamEnemy : ArcEnemy
     //Method called from animation clip to shoot
     private void ShootFromSide(int side)
     {
-        bool shoot = Random.value > 0.33f ? true : false;
-
-        if (side != 2 && !shoot)
+        if (side != 2 && Random.value > 0.33f)
             return;
 
         _isShooting = true;
