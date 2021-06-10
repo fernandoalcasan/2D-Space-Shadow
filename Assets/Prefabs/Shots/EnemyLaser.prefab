@@ -144,13 +144,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 719186705bf0c7c4bb3bf978e00a70ca, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _shot:
-    speed: 8
-    isEnemyShot: 1
-    isMultiColor: 0
-    fireRate: 3
-    verticalOffset: 1.4
-    horizontalOffset: 0.184
-    delayIfMulticolor: 0
-    yLimit: 7
-    xLimit: 11
+  _speed: 8
+  _isEnemyShot: 1
+  _isMultiColor: 0
+  _fireRate: 3
+  _verticalOffset: 1.4
+  _horizontalOffset: 0.184
+  _delayIfMulticolor: 0
+  _yLimit: 7
+  _xLimit: 11

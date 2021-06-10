@@ -6,32 +6,35 @@ using UnityEngine;
 public class EnemyBehavior : MonoBehaviour
 {
     [SerializeField]
-    private Enemy _enemy;
+    private Enemy enemy;
 
+    [Header("Behavior Properties")]
+    [SerializeField]
+    private float _speed;
     protected float Speed
     {
-        get { return _enemy.speed; }
-        private set { _enemy.speed = value; }
+        get => _speed;
+        private set { _speed = value; }
     }
-    protected float XBound { get; private set; }
-    protected float YBound { get; private set; }
 
     private float _canShoot = -1f;
     private bool _dead;
 
+    [Header("References")]
+    [SerializeField]
+    protected GameObject shot;
+    protected Animator anim;
+    private AudioSource _properAudioSource;
     private Player _player;
     private GameManager _gameManager;
 
     public virtual void Start()
     {
-        XBound = _enemy.xLimit;
-        YBound = _enemy.yLimit;
-
-        _canShoot = _enemy.fireDelay;
+        _canShoot = enemy.FireDelay;
         _player = GameObject.Find("Player").GetComponent<Player>();
         _gameManager = GameObject.Find("Game_Manager").GetComponent<GameManager>();
-        _enemy.anim = GetComponent<Animator>();
-        _enemy.properAudioSource = GetComponent<AudioSource>();
+        anim = GetComponent<Animator>();
+        _properAudioSource = GetComponent<AudioSource>();
 
         if (_player is null)
         {
@@ -43,12 +46,12 @@ public class EnemyBehavior : MonoBehaviour
             Debug.LogError("The Game Manager is NULL");
         }
 
-        if (_enemy.anim is null)
+        if (anim is null)
         {
             Debug.LogError("The animator is NULL");
         }
 
-        if (_enemy.properAudioSource is null)
+        if (_properAudioSource is null)
         {
             Debug.LogError("AudioSource is NULL");
         }
@@ -62,6 +65,69 @@ public class EnemyBehavior : MonoBehaviour
         }
     }
 
+    protected virtual void MoveEnemy()
+    {
+        TeleportIfOutOfBounds();
+    }
+
+    ////////////////////////////////
+    //TRANSFORM PROPERTIES//////////
+    ////////////////////////////////
+
+    protected void TeleportIfOutOfBounds()
+    {
+        if (transform.position.y > enemy.YBound || transform.position.y < -enemy.YBound
+            || transform.position.x > enemy.XBound || transform.position.x < -enemy.XBound)
+        {
+            SetNewTransform();
+        }
+    }
+
+    protected virtual void SetNewTransform()
+    {
+        // Teleport on limits
+        // If X limit is reached appear in the opposite side
+        if (transform.position.x > enemy.XBound || transform.position.x < -enemy.XBound)
+        {
+            transform.position = new Vector3(enemy.XBound * (transform.position.x > enemy.XBound ? -1 : 1), transform.position.y, 0);
+        }
+
+        // If Y limit is reached appear in the opposite side
+        if (transform.position.y > enemy.YBound || transform.position.y < -enemy.YBound)
+        {
+            transform.position = new Vector3(transform.position.x, enemy.YBound * (transform.position.y > enemy.YBound ? -1 : 1), 0);
+        }
+    }
+
+    protected void SetNewSide(int side)
+    {
+        switch (side)
+        {
+            case 1: //left
+                transform.position = new Vector3(-enemy.XBound, GetRandomY(), 0);
+                break;
+            case 2: //down
+                transform.position = new Vector3(GetRandomX(), -enemy.YBound, 0);
+                break;
+            case 3: //right
+                transform.position = new Vector3(enemy.XBound, GetRandomY(), 0);
+                break;
+            case 4: //up
+                transform.position = new Vector3(GetRandomX(), enemy.YBound, 0);
+                break;
+        }
+    }
+
+    protected float GetRandomX()
+    {
+        return Random.Range(-enemy.XBound, enemy.XBound);
+    }
+
+    protected float GetRandomY()
+    {
+        return Random.Range(-enemy.YBound, enemy.YBound);
+    }
+
     ////////////////////////////////
     //SHOOTING//////////////////////
     ////////////////////////////////
@@ -69,13 +135,13 @@ public class EnemyBehavior : MonoBehaviour
     void Shoot()
     {
         //Update delay time for laser
-        _canShoot = Time.time + _enemy.fireDelay;
+        _canShoot = Time.time + enemy.FireDelay;
 
-        Instantiate(_enemy.shot, transform.position, transform.rotation);
+        Instantiate(shot, transform.position, transform.rotation);
 
         //Shot AUDIO
         PlayAudio(1);
-    } 
+    }
 
     ////////////////////////////////
     //COLLISIONS////////////////////
@@ -90,16 +156,24 @@ public class EnemyBehavior : MonoBehaviour
             PlayAudio(0);
             int dir = _player.GetDamageDirection(transform.position);
             _player.GetDamage(dir);
-            _player.IncreaseScore(_enemy.scoreValue);
+            _player.IncreaseScore(enemy.ScoreValue);
             DeathSequence();
         }
         //Collition with Laser
         else if (other.CompareTag("SimpleLaser"))
         {
+            if (other.TryGetComponent<Shot>(out var shot))
+            {
+                if (shot.IsEnemyShot)
+                    return;
+            }
+            else
+                Debug.LogError("Shot component is NULL");
+
             //EXPLOSION AUDIO
             PlayAudio(0);
             Destroy(other.gameObject);
-            _player.IncreaseScore(_enemy.scoreValue);
+            _player.IncreaseScore(enemy.ScoreValue);
             DeathSequence();
         }
     }
@@ -114,21 +188,21 @@ public class EnemyBehavior : MonoBehaviour
         Destroy(GetComponent<Collider2D>());
         _dead = true;
         _gameManager.EnemyDestroyed();
-        _enemy.anim.SetTrigger("OnEnemyDeath");
+        anim.SetTrigger("OnEnemyDeath");
         Speed = 0f;
-        Destroy(gameObject, 1.19f);
+        Destroy(gameObject, enemy.DeathTime);
     }
 
     ////////////////////////////////
     //AUDIO/////////////////////////
     ////////////////////////////////
 
-    void PlayAudio(int index)
+    protected void PlayAudio(int index)
     {
-        if (index < _enemy.audioClips.Length && index >= 0)
+        if (index < enemy.AudioClips.Length && index >= 0)
         {
-            _enemy.properAudioSource.clip = _enemy.audioClips[index];
-            _enemy.properAudioSource.Play();
+            _properAudioSource.clip = enemy.AudioClips[index];
+            _properAudioSource.Play();
         }
     }
 }

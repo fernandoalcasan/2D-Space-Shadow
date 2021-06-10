@@ -341,7 +341,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9dc4e5af2f6df4b439647d00ac9ad3b0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _enemy: {fileID: 9041701021125875435, guid: 42fa80d24f01ef64a867833e900a1753, type: 3}
+  _enemies:
+  - {fileID: 9041701021125875435, guid: 42fa80d24f01ef64a867833e900a1753, type: 3}
+  - {fileID: 6230480961930124526, guid: c3886ad8dbdf99241b7db2d1d52fd9c2, type: 3}
   _powerups:
   - {fileID: 1340898760200368278, guid: 4f5582907c992b44891ae89d3a27b1b2, type: 3}
   - {fileID: 2995476574837496918, guid: 6d6d079eb1aea1c48a5d3b73d7809199, type: 3}
@@ -1014,9 +1016,10 @@ GameObject:
   m_Component:
   - component: {fileID: 248227699}
   - component: {fileID: 248227698}
+  - component: {fileID: 248227700}
   m_Layer: 0
   m_Name: Background
-  m_TagString: Untagged
+  m_TagString: PlayGround
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1086,6 +1089,31 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!68 &248227700
+EdgeCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 248227697}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: 0, y: 0}
+  m_EdgeRadius: 0
+  m_Points:
+  - {x: -9.59825, y: -5.4043612}
+  - {x: -9.596244, y: 5.4089127}
+  - {x: 9.599956, y: 5.396224}
+  - {x: 9.598455, y: -5.402243}
+  - {x: -9.597716, y: -5.3981175}
+  m_AdjacentStartPoint: {x: 0, y: 0}
+  m_AdjacentEndPoint: {x: 0, y: 0}
+  m_UseAdjacentStartPoint: 0
+  m_UseAdjacentEndPoint: 0
 --- !u!1 &347572168
 GameObject:
   m_ObjectHideFlags: 0
@@ -3815,7 +3843,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &2135087776
 MonoBehaviour:
   m_ObjectHideFlags: 0

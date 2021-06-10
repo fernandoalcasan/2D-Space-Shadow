@@ -138,15 +138,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 719186705bf0c7c4bb3bf978e00a70ca, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _shot:
-    speed: 8
-    isEnemyShot: 0
-    isMultiColor: 1
-    fireRate: 0
-    verticalOffset: 0
-    delayIfMulticolor: 0.1
-    yLimit: 6.5
-    xLimit: 11
+  _speed: 8
+  _isEnemyShot: 0
+  _isMultiColor: 1
+  _fireRate: 0
+  _verticalOffset: 0
+  _horizontalOffset: 0
+  _delayIfMulticolor: 0.1
+  _yLimit: 6.5
+  _xLimit: 11
 --- !u!68 &365908304611488054
 EdgeCollider2D:
   m_ObjectHideFlags: 0

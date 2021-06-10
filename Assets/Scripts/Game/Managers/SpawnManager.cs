@@ -6,9 +6,10 @@ public class SpawnManager : MonoBehaviour
 {
     //prefab of the enemy
     [SerializeField]
-    private GameObject _enemy;
+    private GameObject[] _enemies;
 
-    //prefabs of the powerups: 0 = triple shot, 1 = speed refill, 2 = shield, 3 = extra life, 4 = ammo refill, 5 = MD shot 
+    //prefabs of the powerups: 0 = triple shot, 1 = speed refill, 2 = shield,
+    //3 = extra life, 4 = ammo refill, 5 = MD shot, 6 = Freeze player 
     [SerializeField]
     private GameObject[] _powerups;
     private List<GameObject> _common, _rare, _veryRare;
@@ -77,7 +78,8 @@ public class SpawnManager : MonoBehaviour
     {
         while (enemies > 0 && !_doNotSpawn)
         {
-            GameObject newEnemy = Instantiate(_enemy);
+            int enemyToSpawn = Random.Range(0, _enemies.Length);
+            GameObject newEnemy = Instantiate(_enemies[enemyToSpawn]);
             newEnemy.transform.parent = _enemyContainer.transform;
             enemies--;
             yield return new WaitForSeconds(delayToSpawn);

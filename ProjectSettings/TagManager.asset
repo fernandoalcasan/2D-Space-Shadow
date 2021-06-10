@@ -6,6 +6,7 @@ TagManager:
   tags:
   - Enemy
   - SimpleLaser
+  - PlayGround
   layers:
   - Default
   - TransparentFX

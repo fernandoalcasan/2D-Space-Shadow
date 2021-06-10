@@ -261,15 +261,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e619113ebee816c429b5e6f7d981251f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _enemy:
-    speed: 4
-    fireDelay: 3
-    scoreValue: 10
-    xLimit: 11
-    yLimit: 7
-    shot: {fileID: 3257339953780460438, guid: 8c59899cf57c9924c961f1c61fc0bda5, type: 3}
-    anim: {fileID: 0}
-    audioClips:
+  enemy:
+    _speed: 4
+    _fireDelay: 3
+    _scoreValue: 10
+    _deathTime: 1.19
+    _xLimit: 11
+    _yLimit: 7
+    _audioClips:
     - {fileID: 8300000, guid: a885c043fab7e46438bba03ba9dab6bc, type: 3}
     - {fileID: 8300000, guid: 75676f361bdfeaf41a46623e95df3dbc, type: 3}
-    properAudioSource: {fileID: 0}
+  _speed: 4
+  shot: {fileID: 3257339953780460438, guid: 8c59899cf57c9924c961f1c61fc0bda5, type: 3}
+  _audioClips:
+  - {fileID: 8300000, guid: a885c043fab7e46438bba03ba9dab6bc, type: 3}
+  - {fileID: 8300000, guid: 75676f361bdfeaf41a46623e95df3dbc, type: 3}

@@ -243,13 +243,13 @@ public class Player : MonoBehaviour
     {
         // Teleport on limits
         // If X limit is reached appear in the opposite side
-        if (transform.position.x > _xLimit | transform.position.x < -_xLimit)
+        if (transform.position.x > _xLimit || transform.position.x < -_xLimit)
         {
             transform.position = new Vector3(_xLimit * (transform.position.x > _xLimit ? -1 : 1), transform.position.y, 0);
         }
 
         // If Y limit is reached appear in the opposite side
-        if (transform.position.y > _yLimit | transform.position.y < -_yLimit)
+        if (transform.position.y > _yLimit || transform.position.y < -_yLimit)
         {
             transform.position = new Vector3(transform.position.x, _yLimit * (transform.position.y > _yLimit ? -1 : 1), 0);
         }
@@ -302,7 +302,7 @@ public class Player : MonoBehaviour
     {
         if (_shots[index].TryGetComponent<ForwardShot>(out var forwardShot))
         {
-            _fireDelay = forwardShot.GetFireRate();
+            _fireDelay = forwardShot.FireRate;
         }
     }
 
