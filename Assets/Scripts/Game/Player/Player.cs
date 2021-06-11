@@ -311,20 +311,13 @@ public class Player : MonoBehaviour
     ////////////////////////////////
 
     public void GetDamage(int quadrant)
-    {
-        // if shield is active
-        if (_shield.activeSelf)
-        {
-            bool stillsActive = _shieldBehavior.DamageShield();
-            _shield.SetActive(stillsActive);
-            return;
-        }
-        
+    {        
         _lives--;
         _uiManager.UpdateLives(_lives);
 
         //Play damage audio
-        PlayTriggerAudio(1);
+        if (_lives > 0)
+            PlayTriggerAudio(1);
 
         //shake camera
         StartCoroutine(_camShake.ShakeCamera());

@@ -5,8 +5,11 @@ TagManager:
   serializedVersion: 2
   tags:
   - Enemy
-  - SimpleLaser
   - PlayGround
+  - PlayerShot
+  - EnemyShot
+  - PlayerShield
+  - EnemyShield
   layers:
   - Default
   - TransparentFX

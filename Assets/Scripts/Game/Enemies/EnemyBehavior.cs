@@ -152,28 +152,14 @@ public class EnemyBehavior : MonoBehaviour
         //Collition with player
         if (other.CompareTag("Player"))
         {
-            //EXPLOSION AUDIO
-            PlayAudio(0);
             int dir = _player.GetDamageDirection(transform.position);
             _player.GetDamage(dir);
-            _player.IncreaseScore(enemy.ScoreValue);
             DeathSequence();
         }
         //Collition with Laser
-        else if (other.CompareTag("SimpleLaser"))
+        else if (other.CompareTag("PlayerShot"))
         {
-            if (other.TryGetComponent<Shot>(out var shot))
-            {
-                if (shot.IsEnemyShot)
-                    return;
-            }
-            else
-                Debug.LogError("Shot component is NULL");
-
-            //EXPLOSION AUDIO
-            PlayAudio(0);
             Destroy(other.gameObject);
-            _player.IncreaseScore(enemy.ScoreValue);
             DeathSequence();
         }
     }
@@ -182,14 +168,19 @@ public class EnemyBehavior : MonoBehaviour
     //ONDESTROY/////////////////////
     ////////////////////////////////
 
-    void DeathSequence()
+    public void DeathSequence()
     {
+        PlayAudio(0);
+
         //to avoid making damage again while doing animation
         Destroy(GetComponent<Collider2D>());
         _dead = true;
-        _gameManager.EnemyDestroyed();
         anim.SetTrigger("OnEnemyDeath");
         Speed = 0f;
+
+        _player.IncreaseScore(enemy.ScoreValue);
+        _gameManager.EnemyDestroyed();
+
         Destroy(gameObject, enemy.DeathTime);
     }
 

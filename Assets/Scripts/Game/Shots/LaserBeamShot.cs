@@ -20,14 +20,24 @@ public class LaserBeamShot : Shot
 
         RaycastHit2D[] hits = Physics2D.RaycastAll(transform.position, transform.up, _range);
 
+        //last collider will always be the playground, which is laser beam length -1
+        if (hits[hits.Length-1].distance > 0f)
+        {
+            _line.SetPosition(0, transform.position);
+            _line.SetPosition(1, transform.position + (transform.up * hits[hits.Length-1].distance));
+        }
+
+        //check for damage between first collider and playground
         foreach (var hit in hits)
         {
-            if (hit.collider.CompareTag("PlayGround"))
+            if(hit.collider.CompareTag("PlayerShield"))
             {
-                if (hit.distance <= 0f)
-                    break;
-                _line.SetPosition(0, transform.position);
-                _line.SetPosition(1, transform.position + (transform.up * hit.distance));
+                if (hit.transform.TryGetComponent<Shield>(out var shield))
+                    shield.DamageShield();
+                else
+                    Debug.LogError("Shield reference is NULL");
+                //if shield was detected break the loop
+                break;
             }
 
             if (hit.collider.CompareTag("Player"))

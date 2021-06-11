@@ -16,7 +16,7 @@ GameObject:
   - component: {fileID: 3002989339383391137}
   m_Layer: 0
   m_Name: MDShot
-  m_TagString: SimpleLaser
+  m_TagString: PlayerShot
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

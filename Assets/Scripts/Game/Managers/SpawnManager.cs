@@ -4,6 +4,13 @@ using UnityEngine;
 
 public class SpawnManager : MonoBehaviour
 {
+    //prefab of enemy shield
+    [SerializeField]
+    private GameObject _enemyShield;
+
+    [SerializeField] [Range(0f, 1f)]
+    private float _shieldProbability;
+
     //prefab of the enemy
     [SerializeField]
     private GameObject[] _enemies;
@@ -79,6 +86,10 @@ public class SpawnManager : MonoBehaviour
         {
             int enemyToSpawn = Random.Range(0, _enemies.Length);
             GameObject newEnemy = Instantiate(_enemies[enemyToSpawn]);
+
+            if(Random.value <= _shieldProbability)
+                Instantiate(_enemyShield, newEnemy.transform);
+
             newEnemy.transform.parent = _enemyContainer.transform;
 
             //If enemy spawned is a pair number, spawn a powerup

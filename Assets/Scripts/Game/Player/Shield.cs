@@ -5,7 +5,9 @@ using UnityEngine;
 public class Shield : MonoBehaviour
 {
     [SerializeField]
-    private int _resistance = 3;
+    private bool _isEnemyShield;
+    [SerializeField]
+    private int _resistance;
     private int _maxResistance;
     private SpriteRenderer _shieldRenderer;
     private Color _normal, _damage1, _damage2;
@@ -23,21 +25,19 @@ public class Shield : MonoBehaviour
         {
             Debug.LogError("Shield renderer is NULL");
         }
+
+        SetShieldColor();
     }
 
-    public bool DamageShield()
+    public void DamageShield()
     {
         _resistance--;
         SetShieldColor();
 
-        //return if shield stills active
-        switch(_resistance)
+        if(_resistance == 0)
         {
-            case 1: case 2:
-                return true;
-            default:
-                _resistance = _maxResistance;
-                return false;
+            _resistance = _maxResistance;
+            gameObject.SetActive(false);
         }
     }
 
@@ -61,5 +61,52 @@ public class Shield : MonoBehaviour
     {
         _resistance = _maxResistance;
         SetShieldColor();
+    }
+
+    private void OnTriggerEnter2D(Collider2D other)
+    {
+        if (!_isEnemyShield)
+        {
+            if (other.CompareTag("EnemyShield"))
+            {
+                DamageShield();
+            }
+            else if (other.CompareTag("EnemyShot"))
+            {
+                Destroy(other.gameObject);
+                DamageShield();
+            }
+            else if (other.CompareTag("Enemy"))
+            {
+                if (other.TryGetComponent<EnemyBehavior>(out var enemy))
+                    enemy.DeathSequence();
+                DamageShield();
+            }
+        }
+        else
+        {
+            if (other.CompareTag("PlayerShield"))
+            {
+                DamageShield();
+            }
+            else if (other.CompareTag("PlayerShot"))
+            {
+                Destroy(other.gameObject);
+                DamageShield();
+            }
+            else if (other.CompareTag("Player"))
+            {
+                if (other.TryGetComponent<Player>(out var player))
+                {
+                    int dir = player.GetDamageDirection(transform.position);
+                    player.GetDamage(dir);
+                }
+                else
+                    Debug.LogError("Player reference is NULL");
+
+                DamageShield();
+            }
+        }
+
     }
 }

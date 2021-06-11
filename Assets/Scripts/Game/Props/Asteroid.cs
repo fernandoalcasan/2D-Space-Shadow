@@ -82,7 +82,7 @@ public class Asteroid : MonoBehaviour
             return;
         }
 
-        if(other.CompareTag("SimpleLaser"))
+        if(other.CompareTag("PlayerShot"))
         {
             Destroy(other.gameObject);
             OnAsteroidDestruction();
