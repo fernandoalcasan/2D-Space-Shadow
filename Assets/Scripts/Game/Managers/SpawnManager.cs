@@ -33,7 +33,6 @@ public class SpawnManager : MonoBehaviour
     public void SpawnNewWave(int num, float delay)
     {
         StartCoroutine(SpawnEnemies(num, delay));
-        StartCoroutine(SpawnPowerups());
     }
 
     void InitializePowerups()
@@ -81,18 +80,14 @@ public class SpawnManager : MonoBehaviour
             int enemyToSpawn = Random.Range(0, _enemies.Length);
             GameObject newEnemy = Instantiate(_enemies[enemyToSpawn]);
             newEnemy.transform.parent = _enemyContainer.transform;
+
+            //If enemy spawned is a pair number, spawn a powerup
+            if (enemies % 2 == 0)
+                Instantiate(ChoosePowerupToSpawn());
+
             enemies--;
+
             yield return new WaitForSeconds(delayToSpawn);
-        }
-    }
-
-    IEnumerator SpawnPowerups()
-    {
-        while (!_doNotSpawn)
-        {
-            Instantiate(ChoosePowerupToSpawn());
-
-            yield return new WaitForSeconds(Random.Range(5f, 10f));
         }
     }
 
