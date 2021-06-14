@@ -10,6 +10,13 @@ public class SpawnManager : MonoBehaviour
 
     [SerializeField] [Range(0f, 1f)]
     private float _shieldProbability;
+    
+    //prefab of enemy range
+    [SerializeField]
+    private GameObject _enemyAggressive;
+
+    [SerializeField] [Range(0f, 1f)]
+    private float _aggressiveProbability;
 
     //prefab of the enemy
     [SerializeField]
@@ -89,6 +96,9 @@ public class SpawnManager : MonoBehaviour
 
             if(Random.value <= _shieldProbability)
                 Instantiate(_enemyShield, newEnemy.transform);
+            
+            if(enemyToSpawn == 0 && Random.value <= _aggressiveProbability)
+                Instantiate(_enemyAggressive, newEnemy.transform);
 
             newEnemy.transform.parent = _enemyContainer.transform;
 

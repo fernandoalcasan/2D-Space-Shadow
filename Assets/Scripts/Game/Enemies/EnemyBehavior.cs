@@ -172,6 +172,14 @@ public class EnemyBehavior : MonoBehaviour
     {
         PlayAudio(0);
 
+        if(transform.childCount > 0)
+        {
+            foreach(Transform child in transform)
+            {
+                Destroy(child.gameObject);
+            }
+        }
+
         //to avoid making damage again while doing animation
         Destroy(GetComponent<Collider2D>());
         _dead = true;

@@ -343,6 +343,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _enemyShield: {fileID: 8062862725185572777, guid: 5acffa035a9369445aa55c86befbee24, type: 3}
   _shieldProbability: 0.2
+  _enemyAggressive: {fileID: 8987548943576646231, guid: f637c94cc81c99445bfa5a63661d4c95, type: 3}
+  _aggressiveProbability: 0.2
   _enemies:
   - {fileID: 9041701021125875435, guid: 42fa80d24f01ef64a867833e900a1753, type: 3}
   - {fileID: 6230480961930124526, guid: c3886ad8dbdf99241b7db2d1d52fd9c2, type: 3}
@@ -3851,7 +3853,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &2135087776
 MonoBehaviour:
   m_ObjectHideFlags: 0

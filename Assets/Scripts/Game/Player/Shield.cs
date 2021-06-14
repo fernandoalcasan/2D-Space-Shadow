@@ -80,6 +80,8 @@ public class Shield : MonoBehaviour
             {
                 if (other.TryGetComponent<EnemyBehavior>(out var enemy))
                     enemy.DeathSequence();
+                else
+                    Debug.LogError("Enemy reference is NULL");
                 DamageShield();
             }
         }
