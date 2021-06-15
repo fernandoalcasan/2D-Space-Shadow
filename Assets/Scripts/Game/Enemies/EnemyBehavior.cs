@@ -160,6 +160,8 @@ public class EnemyBehavior : MonoBehaviour
 
         while(!_dead)
         {
+            yield return _smartDelay;
+
             RaycastHit2D[] hits = Physics2D.RaycastAll(transform.position, transform.up, range);
 
             foreach (var hit in hits)
@@ -171,7 +173,6 @@ public class EnemyBehavior : MonoBehaviour
                     anim.SetTrigger("SmartShot");
                 }
             }
-            yield return _smartDelay;
         }
     }
 
