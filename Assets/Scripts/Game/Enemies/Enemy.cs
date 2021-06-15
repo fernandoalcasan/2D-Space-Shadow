@@ -7,12 +7,15 @@ public class Enemy
 {
     [Header("Static Properties")]
     [SerializeField]
+    private bool _isSmart;
+    [SerializeField]
     private float _fireDelay;
     [SerializeField]
     private int _scoreValue;
     [SerializeField]
     private float _deathTime;
 
+    public bool IsSmart { get => _isSmart; }
     public float FireDelay { get => _fireDelay; }
     public int ScoreValue { get => _scoreValue; }
     public float DeathTime { get => _deathTime; }

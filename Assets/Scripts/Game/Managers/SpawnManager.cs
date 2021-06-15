@@ -96,8 +96,8 @@ public class SpawnManager : MonoBehaviour
 
             if(Random.value <= _shieldProbability)
                 Instantiate(_enemyShield, newEnemy.transform);
-            
-            if(enemyToSpawn == 0 && Random.value <= _aggressiveProbability)
+
+            if(enemyToSpawn != 1 && Random.value <= _aggressiveProbability)
                 Instantiate(_enemyAggressive, newEnemy.transform);
 
             newEnemy.transform.parent = _enemyContainer.transform;

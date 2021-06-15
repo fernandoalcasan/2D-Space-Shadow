@@ -17,12 +17,17 @@ public class EnemyBehavior : MonoBehaviour
         private set { _speed = value; }
     }
 
+    [SerializeField]
+    private float _delayIfSmart;
+    private WaitForSeconds _smartDelay;
     private float _canShoot = -1f;
     private bool _dead;
 
     [Header("References")]
     [SerializeField]
     protected GameObject shot;
+    [SerializeField]
+    private GameObject _smartShot;
     protected Animator anim;
     private AudioSource _properAudioSource;
     private Player _player;
@@ -35,6 +40,12 @@ public class EnemyBehavior : MonoBehaviour
         _gameManager = GameObject.Find("Game_Manager").GetComponent<GameManager>();
         anim = GetComponent<Animator>();
         _properAudioSource = GetComponent<AudioSource>();
+
+        if (enemy.IsSmart)
+        {
+            _smartDelay = new WaitForSeconds(_delayIfSmart);
+            StartCoroutine(CheckIfPlayerIsBehind());
+        }
 
         if (_player is null)
         {
@@ -138,6 +149,36 @@ public class EnemyBehavior : MonoBehaviour
         _canShoot = Time.time + enemy.FireDelay;
 
         Instantiate(shot, transform.position, transform.rotation);
+
+        //Shot AUDIO
+        PlayAudio(1);
+    }
+
+    private IEnumerator CheckIfPlayerIsBehind()
+    {
+        float range = enemy.XBound * 2f;
+
+        while(!_dead)
+        {
+            RaycastHit2D[] hits = Physics2D.RaycastAll(transform.position, transform.up, range);
+
+            foreach (var hit in hits)
+            {
+                if (hit.collider.CompareTag("Player"))
+                {
+                    //delay the default shot (front)
+                    _canShoot = Time.time + enemy.FireDelay;
+                    anim.SetTrigger("SmartShot");
+                }
+            }
+            yield return _smartDelay;
+        }
+    }
+
+    private void ShootBehind()
+    {
+        Quaternion inverseRot = Quaternion.Euler(0, 0, transform.rotation.eulerAngles.z - 180f);
+        Instantiate(_smartShot, transform.position, inverseRot);
 
         //Shot AUDIO
         PlayAudio(1);

@@ -79,14 +79,9 @@ public class Shot : MonoBehaviour
         Vector3 vertFix = transform.up * _verticalOffset;
         Vector3 horiFix = transform.right * _horizontalOffset;
 
-        //The vertical offset is subtracted or added as the models for player and enemy are inverted (rotation)
+        //Random sign is used in here as the enemy have 2 possible cannons to shoot (horizontally)
         if (_isEnemyShot)
-        {
-            vertFix *= -1;
-
-            //Random sign is used in here as the enemy have 2 possible cannons to shoot (horizontally)
             horiFix *= Random.value < 0.5f ? 1 : -1;
-        }
 
         Vector3 newPos = transform.position + vertFix + horiFix;
 

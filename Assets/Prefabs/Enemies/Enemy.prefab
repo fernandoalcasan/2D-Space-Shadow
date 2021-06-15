@@ -262,7 +262,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   enemy:
-    _speed: 4
+    _isSmart: 1
     _fireDelay: 3
     _scoreValue: 10
     _deathTime: 1.19
@@ -272,7 +272,6 @@ MonoBehaviour:
     - {fileID: 8300000, guid: a885c043fab7e46438bba03ba9dab6bc, type: 3}
     - {fileID: 8300000, guid: 75676f361bdfeaf41a46623e95df3dbc, type: 3}
   _speed: 4
+  _delayIfSmart: 1
   shot: {fileID: 3257339953780460438, guid: 8c59899cf57c9924c961f1c61fc0bda5, type: 3}
-  _audioClips:
-  - {fileID: 8300000, guid: a885c043fab7e46438bba03ba9dab6bc, type: 3}
-  - {fileID: 8300000, guid: 75676f361bdfeaf41a46623e95df3dbc, type: 3}
+  _smartShot: {fileID: 9035656435159371752, guid: 7d01d2efdea0f3b418455fbae829b379, type: 3}
