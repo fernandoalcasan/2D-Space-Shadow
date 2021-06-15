@@ -4,7 +4,10 @@ using UnityEngine;
 
 public class Powerup : MonoBehaviour
 {
-    //Properties of powerup
+    private Transform _player;
+    private bool _attracted;
+
+    [Header("Power-Up Properties")]
     [SerializeField]
     private float _speed = 3f;
 
@@ -30,14 +33,27 @@ public class Powerup : MonoBehaviour
     [SerializeField]
     private AudioClip _collectedAudio;
 
+    private void OnEnable()
+    {
+        Player.onAttract += ChangeAttraction;
+    }
+
     void Start()
     {
+        _player = GameObject.Find("Player").GetComponent<Transform>();
+
+        if (_player is null)
+            Debug.LogError("Player transform is NULL");
+
         transform.position = new Vector3(Random.Range(-_xLimit, _xLimit), _yLimit, 0);
     }
 
     void Update()
     {
-        MovePowerup();
+        if (!_attracted)
+            MovePowerup();
+        else
+            MoveTowardsPlayer();
     }
 
     ////////////////////////////////
@@ -47,6 +63,11 @@ public class Powerup : MonoBehaviour
     public RaritySelector GetRarity()
     {
         return _rarity;
+    }
+
+    private void ChangeAttraction()
+    {
+        _attracted = !_attracted;
     }
 
     ////////////////////////////////
@@ -62,9 +83,20 @@ public class Powerup : MonoBehaviour
         }
     }
 
+    private void MoveTowardsPlayer()
+    {
+        float step = _speed * Time.deltaTime * 2;
+        transform.position = Vector3.MoveTowards(transform.position, _player.position, step);
+    }
+
     ////////////////////////////////
     //ONDESTROY/////////////////////
     ////////////////////////////////
+
+    private void OnDestroy()
+    {
+        Player.onAttract -= ChangeAttraction;
+    }
 
     private void OnTriggerEnter2D(Collider2D other)
     {

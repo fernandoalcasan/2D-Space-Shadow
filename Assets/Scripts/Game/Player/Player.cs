@@ -4,6 +4,9 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
+    public delegate void OnAttract();
+    public static event OnAttract onAttract;
+
     // Properties of the player
     [SerializeField]
     private float _speed = 5f;
@@ -137,6 +140,14 @@ public class Player : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Space) && Time.time > _canShoot)
         {
             ShootLaser();
+        }
+
+        if(Input.GetKeyDown(KeyCode.C) || Input.GetKeyUp(KeyCode.C))
+        {
+            if(!(onAttract is null))
+            {
+                onAttract();
+            }
         }
     }
 
