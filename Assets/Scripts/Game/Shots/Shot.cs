@@ -112,10 +112,18 @@ public class Shot : MonoBehaviour
 
     public virtual void OnTriggerEnter2D(Collider2D other)
     {
-        if (_isEnemyShot && other.CompareTag("Player"))
+        if (_isEnemyShot)
         {
-            DamagePlayer(other);
-            Destroy(gameObject);
+            if (other.CompareTag("Player"))
+            {
+                DamagePlayer(other);
+                Destroy(gameObject);
+            }
+            else if(other.CompareTag("PowerUp"))
+            {
+                Destroy(other.gameObject);
+                Destroy(gameObject);
+            }
         }
     }
 

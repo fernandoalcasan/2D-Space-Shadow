@@ -4,6 +4,14 @@ using UnityEngine;
 
 public class SpawnManager : MonoBehaviour
 {
+    //prefab of enemy view
+    [SerializeField]
+    private GameObject _enemyView;
+
+    [SerializeField]
+    [Range(0f, 1f)]
+    private float _viewProbability;
+
     //prefab of enemy shield
     [SerializeField]
     private GameObject _enemyShield;
@@ -97,7 +105,10 @@ public class SpawnManager : MonoBehaviour
             if(Random.value <= _shieldProbability)
                 Instantiate(_enemyShield, newEnemy.transform);
 
-            if(enemyToSpawn != 1 && Random.value <= _aggressiveProbability)
+            if (Random.value <= _viewProbability)
+                Instantiate(_enemyView, newEnemy.transform);
+
+            if (enemyToSpawn != 1 && Random.value <= _aggressiveProbability)
                 Instantiate(_enemyAggressive, newEnemy.transform);
 
             newEnemy.transform.parent = _enemyContainer.transform;

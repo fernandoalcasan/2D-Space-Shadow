@@ -10,7 +10,7 @@ public class MDShot : ForwardShot
 
     public override void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.CompareTag("Enemy"))
+        if (other.CompareTag("Enemy") || other.CompareTag("EnemyShield"))
         {
             Instantiate(_mdPelletShot, transform.position + transform.up, transform.rotation);
         }

@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: 6758679185029776053}
   m_Layer: 0
   m_Name: Ammo_Refill_Powerup
-  m_TagString: Untagged
+  m_TagString: PowerUp
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -145,5 +145,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _speed: 3
+  _rarity: 0
   _powerID: 4
   _collectedAudio: {fileID: 8300000, guid: 5ee343246919d2b4bba63ae629e95494, type: 3}

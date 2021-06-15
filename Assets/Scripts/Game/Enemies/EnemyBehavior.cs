@@ -183,6 +183,11 @@ public class EnemyBehavior : MonoBehaviour
         //Shot AUDIO
         PlayAudio(1);
     }
+    
+    public void PowerUpFound()
+    {
+        Shoot();
+    }
 
     ////////////////////////////////
     //COLLISIONS////////////////////

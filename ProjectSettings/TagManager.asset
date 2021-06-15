@@ -10,6 +10,7 @@ TagManager:
   - EnemyShot
   - PlayerShield
   - EnemyShield
+  - PowerUp
   layers:
   - Default
   - TransparentFX

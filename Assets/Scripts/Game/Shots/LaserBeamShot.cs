@@ -44,6 +44,11 @@ public class LaserBeamShot : Shot
             {
                 DamagePlayer(hit.collider);
             }
+            
+            if (hit.collider.CompareTag("PowerUp"))
+            {
+                Destroy(hit.transform.gameObject);
+            }
         }
 
         Destroy(gameObject, _duration);
