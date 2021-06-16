@@ -19,12 +19,19 @@ public class SpawnManager : MonoBehaviour
     [SerializeField] [Range(0f, 1f)]
     private float _shieldProbability;
     
-    //prefab of enemy range
+    //prefab of enemy follows
     [SerializeField]
     private GameObject _enemyAggressive;
 
     [SerializeField] [Range(0f, 1f)]
     private float _aggressiveProbability;
+
+    //prefab of enemy avoids
+    [SerializeField]
+    private GameObject _enemyAvoids;
+
+    [SerializeField] [Range(0f, 1f)]
+    private float _avoidShotsProbability;
 
     //prefab of the enemy
     [SerializeField]
@@ -110,6 +117,9 @@ public class SpawnManager : MonoBehaviour
 
             if (enemyToSpawn != 1 && Random.value <= _aggressiveProbability)
                 Instantiate(_enemyAggressive, newEnemy.transform);
+
+            if (Random.value <= _avoidShotsProbability)
+                Instantiate(_enemyAvoids, newEnemy.transform);
 
             newEnemy.transform.parent = _enemyContainer.transform;
 

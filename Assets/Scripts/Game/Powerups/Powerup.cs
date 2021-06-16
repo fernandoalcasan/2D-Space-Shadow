@@ -40,7 +40,7 @@ public class Powerup : MonoBehaviour
 
     void Start()
     {
-        _player = GameObject.Find("Player").GetComponent<Transform>();
+        _player = GameObject.FindWithTag("Player").GetComponent<Transform>();
 
         if (_player is null)
             Debug.LogError("Player transform is NULL");

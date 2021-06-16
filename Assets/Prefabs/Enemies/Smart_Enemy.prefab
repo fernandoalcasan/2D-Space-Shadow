@@ -55,6 +55,10 @@ PrefabInstance:
       propertyPath: _delayIfSmart
       value: 0.5
       objectReference: {fileID: 0}
+    - target: {fileID: 8063869549163757240, guid: 42fa80d24f01ef64a867833e900a1753, type: 3}
+      propertyPath: enemy._isSmart
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 9041701021125875435, guid: 42fa80d24f01ef64a867833e900a1753, type: 3}
       propertyPath: m_Name
       value: Smart_Enemy

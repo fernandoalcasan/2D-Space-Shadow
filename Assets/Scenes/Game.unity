@@ -345,8 +345,10 @@ MonoBehaviour:
   _viewProbability: 0.2
   _enemyShield: {fileID: 8062862725185572777, guid: 5acffa035a9369445aa55c86befbee24, type: 3}
   _shieldProbability: 0.2
-  _enemyAggressive: {fileID: 8987548943576646231, guid: f637c94cc81c99445bfa5a63661d4c95, type: 3}
+  _enemyAggressive: {fileID: 3033398042573407590, guid: f2d835708784d8c41b558e161186ebd2, type: 3}
   _aggressiveProbability: 0.2
+  _enemyAvoids: {fileID: 4465637473189142789, guid: 97cbc12f907988b48844a2460d5e8d78, type: 3}
+  _avoidShotsProbability: 0.2
   _enemies:
   - {fileID: 9041701021125875435, guid: 42fa80d24f01ef64a867833e900a1753, type: 3}
   - {fileID: 6230480961930124526, guid: c3886ad8dbdf99241b7db2d1d52fd9c2, type: 3}
