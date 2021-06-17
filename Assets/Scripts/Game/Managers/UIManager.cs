@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -203,7 +204,7 @@ public class UIManager : MonoBehaviour
             //If the animation was temporary, stop it
             if(duration > 0f)
             {
-                StartCoroutine(WaitFor(duration, isFinished => anim.SetTrigger("Stop")));
+                StartCoroutine(WaitFor(duration, () => anim.SetTrigger("Stop")));
             }
         }
         else
@@ -212,10 +213,12 @@ public class UIManager : MonoBehaviour
         }
     }
 
-    IEnumerator WaitFor(float seconds, System.Action<bool> finished)
+    IEnumerator WaitFor(float seconds, Action finished = null)
     {
         yield return new WaitForSeconds(seconds);
-        finished(true);
+        
+        if(!(finished is null))
+            finished();
     }
 
     ////////////////////////////////
