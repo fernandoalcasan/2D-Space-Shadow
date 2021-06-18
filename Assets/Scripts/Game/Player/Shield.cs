@@ -78,7 +78,7 @@ public class Shield : MonoBehaviour
             }
             else if (other.CompareTag("Enemy"))
             {
-                if (other.TryGetComponent<EnemyBehavior>(out var enemy))
+                if (other.TryGetComponent<Enemy>(out var enemy))
                     enemy.DeathSequence();
                 else
                     Debug.LogError("Enemy reference is NULL");

@@ -56,6 +56,18 @@ PrefabInstance:
       value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 8063869549163757240, guid: 42fa80d24f01ef64a867833e900a1753, type: 3}
+      propertyPath: _isSmart
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8063869549163757240, guid: 42fa80d24f01ef64a867833e900a1753, type: 3}
+      propertyPath: _deathTime
+      value: 1.19
+      objectReference: {fileID: 0}
+    - target: {fileID: 8063869549163757240, guid: 42fa80d24f01ef64a867833e900a1753, type: 3}
+      propertyPath: _smartShot
+      value: 
+      objectReference: {fileID: 9035656435159371752, guid: 7d01d2efdea0f3b418455fbae829b379, type: 3}
+    - target: {fileID: 8063869549163757240, guid: 42fa80d24f01ef64a867833e900a1753, type: 3}
       propertyPath: _delayIfSmart
       value: 0.5
       objectReference: {fileID: 0}

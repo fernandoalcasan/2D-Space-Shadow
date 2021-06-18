@@ -261,19 +261,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7b8b87e921992ba408eca43c8c122839, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  enemy:
-    _isSmart: 0
-    _fireDelay: 0
-    _scoreValue: 20
-    _deathTime: 2.1
-    _xLimit: 9.5
-    _yLimit: 5.5
-    _audioClips:
-    - {fileID: 8300000, guid: a885c043fab7e46438bba03ba9dab6bc, type: 3}
-    - {fileID: 8300000, guid: c423328b222fb7d4787fff4dd94aca4e, type: 3}
-  _id: 1
   _speed: 5
+  _isSmart: 0
   _delayIfSmart: 0
+  _fireDelay: 0
+  _scoreValue: 20
+  _deathTime: 2.54
+  _xLimit: 9.5
+  _yLimit: 5
+  _audioClips:
+  - {fileID: 8300000, guid: a885c043fab7e46438bba03ba9dab6bc, type: 3}
+  - {fileID: 8300000, guid: 75676f361bdfeaf41a46623e95df3dbc, type: 3}
   shot: {fileID: 8421913783784873193, guid: 13faee3ee1d146f4795ebd4acfe0e203, type: 3}
   _smartShot: {fileID: 0}
   _rotationSpeed: 3

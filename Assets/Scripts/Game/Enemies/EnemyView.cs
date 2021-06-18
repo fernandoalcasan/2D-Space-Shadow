@@ -4,11 +4,11 @@ using UnityEngine;
 
 public class EnemyView : MonoBehaviour
 {
-    private EnemyBehavior _enemy;
+    private Enemy _enemy;
 
     void Start()
     {
-        _enemy = GetComponentInParent<EnemyBehavior>();
+        _enemy = GetComponentInParent<Enemy>();
 
         if (_enemy is null)
             Debug.LogError("Enemy behavior is NULL");
