@@ -52,6 +52,10 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8063869549163757240, guid: 42fa80d24f01ef64a867833e900a1753, type: 3}
+      propertyPath: _id
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 8063869549163757240, guid: 42fa80d24f01ef64a867833e900a1753, type: 3}
       propertyPath: _delayIfSmart
       value: 0.5
       objectReference: {fileID: 0}

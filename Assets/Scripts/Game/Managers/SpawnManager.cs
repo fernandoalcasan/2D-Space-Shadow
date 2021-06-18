@@ -4,53 +4,76 @@ using UnityEngine;
 using System;
 using System.Linq;
 
+[System.Serializable]
+public class EnemyFeature
+{
+    [SerializeField]
+    private GameObject _feature;
+    public GameObject Feature { get => _feature; }
+
+    [SerializeField][Range(0f, 1f)]
+    private float _probability;
+    public float Probability { get => _probability; set => _probability = value; }
+
+    [SerializeField][Range(0f, 1f)]
+    private float _increasePercentage;
+    public float IncreasingPercentage { get => _increasePercentage; }
+
+    //array to store the index of enemy prefabs in spawn manager that are not allowed to have this feature
+    [SerializeField]
+    private int[] _enemiesNotAllowed;
+    public bool IsEnemyNotAllowed(int id) 
+    {
+        return _enemiesNotAllowed.Contains(id);
+    }
+}
+
+[System.Serializable]
+public class PowerUpItem
+{
+    [SerializeField]
+    private GameObject _item;
+    public GameObject Item { get => _item; }
+
+    public enum RarityLevel
+    {
+        Common,
+        Rare,
+        Very_Rare
+    }
+
+    [SerializeField]
+    private RarityLevel _rarity;
+    public RarityLevel Rarity { get => _rarity; }
+}
+
 public class SpawnManager : MonoBehaviour
 {
     public static List<Transform> enemyPool;
     public static Func<Vector3, Transform> NearestEnemy;
 
-    //prefab of enemy view
+    [Header("Enemy features")]
     [SerializeField]
-    private GameObject _enemyView;
+    private EnemyFeature[] _features;
 
-    [SerializeField]
-    [Range(0f, 1f)]
-    private float _viewProbability;
-
-    //prefab of enemy shield
-    [SerializeField]
-    private GameObject _enemyShield;
-
-    [SerializeField] [Range(0f, 1f)]
-    private float _shieldProbability;
-    
-    //prefab of enemy follows
-    [SerializeField]
-    private GameObject _enemyAggressive;
-
-    [SerializeField] [Range(0f, 1f)]
-    private float _aggressiveProbability;
-
-    //prefab of enemy avoids
-    [SerializeField]
-    private GameObject _enemyAvoids;
-
-    [SerializeField] [Range(0f, 1f)]
-    private float _avoidShotsProbability;
-
+    [Header("Prefabs to spawn")]
     //prefab of the enemy
     [SerializeField]
     private GameObject[] _enemies;
 
     //prefabs of the powerups: 0 = triple shot, 1 = speed refill, 2 = shield,
-    //3 = extra life, 4 = ammo refill, 5 = MD shot, 6 = Freeze player 
+    //3 = extra life, 4 = ammo refill, 5 = MD shot, 6 = Freeze player, 7 = Scan Shot
     [SerializeField]
-    private GameObject[] _powerups;
-    private List<GameObject> _common, _rare, _veryRare;
+    private PowerUpItem[] _powerupItems;
+    private List<PowerUpItem> _commonItems, _rareItems, _veryRareItems;
 
     //to store the instances of enemies
     [SerializeField]
     private GameObject _enemyContainer;
+
+    private WaitForSeconds _enemyDelay;
+    private WaitForSeconds _powerupDelay;
+    private bool _wavesEnabled;
 
     //to check if spawning is active
     private bool _doNotSpawn = false;
@@ -74,33 +97,11 @@ public class SpawnManager : MonoBehaviour
 
     void InitializePowerups()
     {
-        _common = new List<GameObject>();
-        _rare = new List<GameObject>();
-        _veryRare = new List<GameObject>();
-        for (int i = 0; i < _powerups.Length; i++)
-        {
-            if (_powerups[i].TryGetComponent<Powerup>(out var PowerupRef))
-            {
-                switch (PowerupRef.GetRarity())
-                {
-                    case Powerup.RaritySelector.Common:
-                        _common.Add(_powerups[i]);
-                        break;
-                    case Powerup.RaritySelector.Rare:
-                        _rare.Add(_powerups[i]);
-                        break;
-                    case Powerup.RaritySelector.Very_Rare:
-                        _veryRare.Add(_powerups[i]);
-                        break;
-                }
-            }
-            else
-            {
-                Debug.LogError("Powerup Script component is NULL");
-            }
-        }
+        _commonItems = _powerupItems.Where((powerup) => powerup.Rarity == PowerUpItem.RarityLevel.Common).ToList();
+        _rareItems = _powerupItems.Where((powerup) => powerup.Rarity == PowerUpItem.RarityLevel.Rare).ToList();
+        _veryRareItems = _powerupItems.Where((powerup) => powerup.Rarity == PowerUpItem.RarityLevel.Very_Rare).ToList();
 
-        if(_common.Count == 0 || _rare.Count == 0 || _veryRare.Count == 0)
+        if(_commonItems.Count == 0 || _rareItems.Count == 0 || _veryRareItems.Count == 0)
         {
             Debug.Log("Please add at least one power-up of each rarity");
         }
@@ -112,34 +113,44 @@ public class SpawnManager : MonoBehaviour
 
     IEnumerator SpawnEnemies(int enemies, float delayToSpawn)
     {
+        UpdateWaveProperties(delayToSpawn);
+
+        if (!_wavesEnabled)
+        {
+            _wavesEnabled = true;
+            StartCoroutine(SpawnPowerups());
+        }
+
         while (enemies > 0 && !_doNotSpawn)
         {
             int enemyToSpawn = UnityEngine.Random.Range(0, _enemies.Length);
             GameObject newEnemy = Instantiate(_enemies[enemyToSpawn]);
 
             enemyPool.Add(newEnemy.transform);
-
-            if (UnityEngine.Random.value <= _shieldProbability)
-                Instantiate(_enemyShield, newEnemy.transform);
-
-            if (enemyToSpawn != 1 && UnityEngine.Random.value <= _viewProbability)
-                Instantiate(_enemyView, newEnemy.transform);
-
-            if (enemyToSpawn != 1 && UnityEngine.Random.value <= _aggressiveProbability)
-                Instantiate(_enemyAggressive, newEnemy.transform);
-
-            if (UnityEngine.Random.value <= _avoidShotsProbability)
-                Instantiate(_enemyAvoids, newEnemy.transform);
+            
+            for (int i = 0; i < _features.Length; i++)
+            {
+                if(UnityEngine.Random.value <= _features[i].Probability)
+                {
+                    if(!_features[i].IsEnemyNotAllowed(enemyToSpawn))
+                        Instantiate(_features[i].Feature, newEnemy.transform);
+                }
+            }
 
             newEnemy.transform.parent = _enemyContainer.transform;
 
-            //If enemy spawned is a pair number, spawn a powerup
-            if (enemies % 2 == 0)
-                Instantiate(ChoosePowerupToSpawn());
-
             enemies--;
 
-            yield return new WaitForSeconds(delayToSpawn);
+            yield return _enemyDelay;
+        }
+    }
+
+    private IEnumerator SpawnPowerups()
+    {
+        while(!_doNotSpawn)
+        {
+            Instantiate(ChoosePowerupToSpawn());
+            yield return _powerupDelay;
         }
     }
 
@@ -153,13 +164,34 @@ public class SpawnManager : MonoBehaviour
         switch(levelProb)
         {
             case float prob when (prob <= .6f): //common
-                return _common[UnityEngine.Random.Range(0, _common.Count)];
+                return _commonItems[UnityEngine.Random.Range(0, _commonItems.Count)].Item;
             case float prob when (prob <= .9f): //rare
-                return _rare[UnityEngine.Random.Range(0, _rare.Count)];
+                return _rareItems[UnityEngine.Random.Range(0, _rareItems.Count)].Item;
             case float prob when (prob <= 1f): //very rare
-                return _veryRare[UnityEngine.Random.Range(0, _veryRare.Count)];
+                return _veryRareItems[UnityEngine.Random.Range(0, _veryRareItems.Count)].Item;
             default:
                 return null;
+        }
+    }
+
+    ////////////////////////////////
+    //PROPERTIES////////////////////
+    ////////////////////////////////
+
+    private void UpdateWaveProperties(float delay)
+    {
+        _enemyDelay = new WaitForSeconds(delay);
+        _powerupDelay = new WaitForSeconds(delay * 1.5f);
+
+        if (!_wavesEnabled)
+            return;
+
+        for (int i = 0; i < _features.Length; i++)
+        {
+            if (_features[i].Probability < 1f)
+                _features[i].Probability *= 1f + _features[i].IncreasingPercentage;
+            if (_features[i].Probability > 1f)
+                _features[i].Probability = 1f;
         }
     }
 

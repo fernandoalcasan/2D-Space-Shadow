@@ -16,7 +16,7 @@ public class Player : MonoBehaviour
     private int _maxLives = 3;
     private int _score;
     [SerializeField]
-    private int _magazine = 15;
+    private int _magazine = 30;
     private int _maxMagazine;
 
     //thruster properties
@@ -417,7 +417,7 @@ public class Player : MonoBehaviour
                 SetCurrentShot(1);
                 break;
             case 1:// thruster energy unit refill
-                _thrusterEnergy += _maxBoost;
+                _thrusterEnergy += (_maxBoost * 2f);
                 if (_thrusterEnergy > _maxThrusterEnergy)
                 {
                     _thrusterEnergy = _maxThrusterEnergy;

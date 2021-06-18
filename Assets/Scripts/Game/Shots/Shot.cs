@@ -141,21 +141,20 @@ public class Shot : MonoBehaviour
     //ONDESTROY/////////////////////
     ////////////////////////////////
 
+    private void OnDestroy()
+    {
+        DestroyParent();
+    }
+
     void DestroyParent()
     {
         if (!(transform.parent is null))
         {
-            if (transform.parent.childCount <= 1)
+            if (transform.parent.childCount == 1)
             {
                 Destroy(transform.parent.gameObject);
             }
         }
-    }
-
-    private void DestroyShot()
-    {
-        DestroyParent();
-        Destroy(gameObject);
     }
 
     void DestroyIfOutOfBounds()
@@ -163,7 +162,7 @@ public class Shot : MonoBehaviour
         if (transform.position.y > _yLimit || transform.position.y < -_yLimit
             || transform.position.x > _xLimit || transform.position.x < -_xLimit)
         {
-            DestroyShot();
+            Destroy(gameObject);
         }
     }
 }

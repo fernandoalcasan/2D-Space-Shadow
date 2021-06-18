@@ -341,14 +341,23 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9dc4e5af2f6df4b439647d00ac9ad3b0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _enemyView: {fileID: 3125211012704607462, guid: 325da0e3f5b78b8458d1c96e4010efd4, type: 3}
-  _viewProbability: 0.2
-  _enemyShield: {fileID: 8062862725185572777, guid: 5acffa035a9369445aa55c86befbee24, type: 3}
-  _shieldProbability: 0.2
-  _enemyAggressive: {fileID: 3033398042573407590, guid: f2d835708784d8c41b558e161186ebd2, type: 3}
-  _aggressiveProbability: 0.2
-  _enemyAvoids: {fileID: 4465637473189142789, guid: 97cbc12f907988b48844a2460d5e8d78, type: 3}
-  _avoidShotsProbability: 0.2
+  _features:
+  - _feature: {fileID: 3125211012704607462, guid: 325da0e3f5b78b8458d1c96e4010efd4, type: 3}
+    _probability: 0.2
+    _increasePercentage: 0.2
+    _enemiesNotAllowed: 01000000
+  - _feature: {fileID: 8062862725185572777, guid: 5acffa035a9369445aa55c86befbee24, type: 3}
+    _probability: 0.2
+    _increasePercentage: 0.2
+    _enemiesNotAllowed: 
+  - _feature: {fileID: 3033398042573407590, guid: f2d835708784d8c41b558e161186ebd2, type: 3}
+    _probability: 0.2
+    _increasePercentage: 0.2
+    _enemiesNotAllowed: 01000000
+  - _feature: {fileID: 4465637473189142789, guid: 97cbc12f907988b48844a2460d5e8d78, type: 3}
+    _probability: 0.2
+    _increasePercentage: 0.2
+    _enemiesNotAllowed: 
   _enemies:
   - {fileID: 9041701021125875435, guid: 42fa80d24f01ef64a867833e900a1753, type: 3}
   - {fileID: 6230480961930124526, guid: c3886ad8dbdf99241b7db2d1d52fd9c2, type: 3}
@@ -362,6 +371,23 @@ MonoBehaviour:
   - {fileID: 6359596397399545171, guid: bac52ed9da456b3459c991e9d84dcb5b, type: 3}
   - {fileID: 8388839927889685763, guid: 8f716cd68c8bd5e42b1c7d8504b3645b, type: 3}
   - {fileID: 2804752101169991440, guid: de7b480947f8a45419c158b362560254, type: 3}
+  _powerupItems:
+  - _item: {fileID: 1340898760200368278, guid: 4f5582907c992b44891ae89d3a27b1b2, type: 3}
+    _rarity: 1
+  - _item: {fileID: 2995476574837496918, guid: 6d6d079eb1aea1c48a5d3b73d7809199, type: 3}
+    _rarity: 0
+  - _item: {fileID: 4929429721902606149, guid: b10a7560f0746774cbcbeac89af77da1, type: 3}
+    _rarity: 1
+  - _item: {fileID: 3187179708257009220, guid: 1c1f88fd33964b548bc8859a187d9176, type: 3}
+    _rarity: 1
+  - _item: {fileID: 6758679185029775946, guid: d7a5158c71e0ef242a1336993d54b828, type: 3}
+    _rarity: 0
+  - _item: {fileID: 6359596397399545171, guid: bac52ed9da456b3459c991e9d84dcb5b, type: 3}
+    _rarity: 2
+  - _item: {fileID: 8388839927889685763, guid: 8f716cd68c8bd5e42b1c7d8504b3645b, type: 3}
+    _rarity: 2
+  - _item: {fileID: 2804752101169991440, guid: de7b480947f8a45419c158b362560254, type: 3}
+    _rarity: 2
   _enemyContainer: {fileID: 358413938}
 --- !u!4 &128208967
 Transform:
@@ -2222,7 +2248,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _speed: 5
   _maxLives: 3
-  _magazine: 15
+  _magazine: 30
   _thrusterEnergy: 100
   _fireDelay: 0.2
   _shots:
