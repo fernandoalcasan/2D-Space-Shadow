@@ -227,6 +227,8 @@ public class EnemyBehavior : MonoBehaviour
             }
         }
 
+        SpawnManager.enemyPool.Remove(transform);
+
         //to avoid making damage again while doing animation
         Destroy(GetComponent<Collider2D>());
         _dead = true;

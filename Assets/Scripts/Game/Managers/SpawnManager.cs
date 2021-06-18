@@ -1,9 +1,14 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
+using System.Linq;
 
 public class SpawnManager : MonoBehaviour
 {
+    public static List<Transform> enemyPool;
+    public static Func<Vector3, Transform> NearestEnemy;
+
     //prefab of enemy view
     [SerializeField]
     private GameObject _enemyView;
@@ -52,6 +57,9 @@ public class SpawnManager : MonoBehaviour
 
     private void Start()
     {
+        enemyPool = new List<Transform>();
+        NearestEnemy = (pos) => enemyPool.OrderBy(ePos => (ePos.position - pos).sqrMagnitude).FirstOrDefault();
+
         InitializePowerups();
     }
 
@@ -106,19 +114,21 @@ public class SpawnManager : MonoBehaviour
     {
         while (enemies > 0 && !_doNotSpawn)
         {
-            int enemyToSpawn = Random.Range(0, _enemies.Length);
+            int enemyToSpawn = UnityEngine.Random.Range(0, _enemies.Length);
             GameObject newEnemy = Instantiate(_enemies[enemyToSpawn]);
 
-            if(Random.value <= _shieldProbability)
+            enemyPool.Add(newEnemy.transform);
+
+            if (UnityEngine.Random.value <= _shieldProbability)
                 Instantiate(_enemyShield, newEnemy.transform);
 
-            if (enemyToSpawn != 1 && Random.value <= _viewProbability)
+            if (enemyToSpawn != 1 && UnityEngine.Random.value <= _viewProbability)
                 Instantiate(_enemyView, newEnemy.transform);
 
-            if (enemyToSpawn != 1 && Random.value <= _aggressiveProbability)
+            if (enemyToSpawn != 1 && UnityEngine.Random.value <= _aggressiveProbability)
                 Instantiate(_enemyAggressive, newEnemy.transform);
 
-            if (Random.value <= _avoidShotsProbability)
+            if (UnityEngine.Random.value <= _avoidShotsProbability)
                 Instantiate(_enemyAvoids, newEnemy.transform);
 
             newEnemy.transform.parent = _enemyContainer.transform;
@@ -139,15 +149,15 @@ public class SpawnManager : MonoBehaviour
         //Rare gets 30%
         //Very Rare gets 10%
         
-        float levelProb = Random.value;
+        float levelProb = UnityEngine.Random.value;
         switch(levelProb)
         {
             case float prob when (prob <= .6f): //common
-                return _common[Random.Range(0, _common.Count)];
+                return _common[UnityEngine.Random.Range(0, _common.Count)];
             case float prob when (prob <= .9f): //rare
-                return _rare[Random.Range(0, _rare.Count)];
+                return _rare[UnityEngine.Random.Range(0, _rare.Count)];
             case float prob when (prob <= 1f): //very rare
-                return _veryRare[Random.Range(0, _veryRare.Count)];
+                return _veryRare[UnityEngine.Random.Range(0, _veryRare.Count)];
             default:
                 return null;
         }

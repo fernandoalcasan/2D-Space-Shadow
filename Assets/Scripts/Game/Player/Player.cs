@@ -451,6 +451,9 @@ public class Player : MonoBehaviour
                 _speed = 0f;
                 _animator.SetTrigger("Freeze");
                 break;
+            case 7: //scan shot powerup
+                SetCurrentShot(3);
+                break;
         }
 
         if (time > 0f) //if the powerup is temporary
@@ -478,6 +481,7 @@ public class Player : MonoBehaviour
         {
             case 0: //triple shot
             case 5: //Multidirectional shot
+            case 7: //Scan shot
                 SetCurrentShot(0);
                 break;
             case 6: //Unfreeze player

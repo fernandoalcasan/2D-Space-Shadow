@@ -68,7 +68,7 @@ public class Asteroid : MonoBehaviour
 
     void RotateAsteroid()
     {
-        transform.Rotate(Vector3.forward * _rotationSpeed * Time.deltaTime, Space.World);
+        transform.Rotate(_rotationSpeed * Time.deltaTime * Vector3.forward, Space.World);
     }
 
     ////////////////////////////////

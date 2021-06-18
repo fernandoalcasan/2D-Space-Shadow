@@ -129,6 +129,9 @@ public class Powerup : MonoBehaviour
                     case 6: //freeze player powerup
                         player.EnablePowerup(_powerID, 2f);
                         break;
+                    case 7: //Scan Shot powerup
+                        player.EnablePowerup(_powerID, 5f);
+                        break;
                 }
             }
             AudioSource.PlayClipAtPoint(_collectedAudio, Camera.main.transform.position);
