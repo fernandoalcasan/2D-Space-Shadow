@@ -419,21 +419,15 @@ public class Player : MonoBehaviour
             case 1:// thruster energy unit refill
                 _thrusterEnergy += (_maxBoost * 2f);
                 if (_thrusterEnergy > _maxThrusterEnergy)
-                {
                     _thrusterEnergy = _maxThrusterEnergy;
-                }
                 _uiManager.UpdateBarEnergy(_thrusterEnergy, _maxThrusterEnergy);
                 _canBoost = true;
                 break;
             case 2: // shield
                 if (_shield.activeSelf)
-                {
                     _shieldBehavior.RestoreShield();
-                }
                 else
-                {
                     _shield.SetActive(true);
-                }
                 break;
             case 3: //extra life
                 _lives++;
@@ -457,9 +451,7 @@ public class Player : MonoBehaviour
         }
 
         if (time > 0f) //if the powerup is temporary
-        {
             StartCoroutine(DisableTempPowerup(power, time));
-        }
     }
 
     void RestoreOneHealthVisualizer()
@@ -480,12 +472,19 @@ public class Player : MonoBehaviour
         switch(power)
         {
             case 0: //triple shot
+                if (_currentShot == _shots[1])
+                    SetCurrentShot(0);
+                break;
             case 5: //Multidirectional shot
-            case 7: //Scan shot
-                SetCurrentShot(0);
+                if (_currentShot == _shots[2])
+                    SetCurrentShot(0);
                 break;
             case 6: //Unfreeze player
                 _speed = 5f;
+                break;
+            case 7: //Scan shot
+                if (_currentShot == _shots[3])
+                    SetCurrentShot(0);
                 break;
         }
     }
