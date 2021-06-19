@@ -11,11 +11,9 @@ public class Enemy : MonoBehaviour
     protected float Speed { get => _speed; }
 
     [SerializeField]
-    private bool _isSmart;
-    [SerializeField]
-    private float _delayIfSmart;
-    [SerializeField]
     private float _fireDelay;
+    protected float FireDelay { get => _fireDelay; }
+
     [SerializeField]
     private int _scoreValue;
     [SerializeField]
@@ -35,29 +33,22 @@ public class Enemy : MonoBehaviour
     [Header("References")]
     [SerializeField]
     protected GameObject shot;
-    [SerializeField]
-    private GameObject _smartShot;
     protected Animator anim;
     private Player _player;
     private GameManager _gameManager;
     
-    private float _canShoot = -1f;
+    protected float canShoot = -1f;
+
     private bool _dead;
-    private WaitForSeconds _smartDelay;
+    protected bool IsDead { get => _dead; }
 
     public virtual void Start()
     {
-        _canShoot = _fireDelay;
+        canShoot = _fireDelay;
         _player = GameObject.Find("Player").GetComponent<Player>();
         _gameManager = GameObject.Find("Game_Manager").GetComponent<GameManager>();
         anim = GetComponent<Animator>();
         _properAudioSource = GetComponent<AudioSource>();
-
-        if (_isSmart)
-        {
-            _smartDelay = new WaitForSeconds(_delayIfSmart);
-            StartCoroutine(CheckIfPlayerIsBehind());
-        }
 
         if (_player is null)
         {
@@ -82,7 +73,7 @@ public class Enemy : MonoBehaviour
 
     public virtual void Update()
     {
-        if (Time.time > _canShoot && !_dead)
+        if (Time.time > canShoot && !_dead)
         {
             Shoot();
         }
@@ -158,40 +149,9 @@ public class Enemy : MonoBehaviour
     void Shoot()
     {
         //Update delay time for laser
-        _canShoot = Time.time + _fireDelay;
+        canShoot = Time.time + _fireDelay;
 
         Instantiate(shot, transform.position, transform.rotation);
-
-        //Shot AUDIO
-        PlayAudio(1);
-    }
-
-    private IEnumerator CheckIfPlayerIsBehind()
-    {
-        float range = _xLimit * 2f;
-
-        while (!_dead)
-        {
-            yield return _smartDelay;
-
-            RaycastHit2D[] hits = Physics2D.RaycastAll(transform.position, transform.up, range);
-
-            foreach (var hit in hits)
-            {
-                if (hit.collider.CompareTag("Player"))
-                {
-                    //delay the default shot (front)
-                    _canShoot = Time.time + _fireDelay;
-                    anim.SetTrigger("SmartShot");
-                }
-            }
-        }
-    }
-
-    private void ShootBehind()
-    {
-        Quaternion inverseRot = Quaternion.Euler(0, 0, transform.rotation.eulerAngles.z - 180f);
-        Instantiate(_smartShot, transform.position, inverseRot);
 
         //Shot AUDIO
         PlayAudio(1);
