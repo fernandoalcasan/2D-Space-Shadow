@@ -97,6 +97,8 @@ public class UIManager : MonoBehaviour
         {
             Debug.LogError("UI Audio Source is NULL");
         }
+
+        Thrusters.OnThrusterUsage += UpdateEnergyUIs;
     }
 
     ////////////////////////////////
@@ -121,13 +123,20 @@ public class UIManager : MonoBehaviour
         }
     }
 
-    public void UpdateBarEnergy(float value, float maxValue)
+    private void UpdateEnergyUIs(float energy, float usage)
     {
-        float amount = value / maxValue;
-        _thrusterBarMask.fillAmount = amount;
+        _thrusterBarMask.fillAmount = energy;
+        _thrusterThresholdFill.fillAmount = usage;
 
+        UpdateEnergyColor(energy);
+        if (usage >= 1f)
+            ThresholdReached();
+    }
+
+    private void UpdateEnergyColor(float value)
+    {
         //change color
-        switch(amount)
+        switch (value)
         {
             case float x when x <= 0.3f:
                 _thrusterBarFill.color = Color.red;
@@ -148,12 +157,6 @@ public class UIManager : MonoBehaviour
             _maxAmmo = value;
         }
         _ammoText.text = value + "/" + _maxAmmo;
-    }
-
-    public void UpdateThresholdEnergy(float value, float maxValue)
-    {
-        float amount = value / maxValue;
-        _thrusterThresholdFill.fillAmount = amount;
     }
 
     public void ThresholdReached()

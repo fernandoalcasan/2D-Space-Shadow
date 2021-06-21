@@ -19,23 +19,13 @@ public class Player : MonoBehaviour
     private int _magazine = 30;
     private int _maxMagazine;
 
-    //thruster properties
-    [SerializeField]
-    private float _thrusterEnergy = 100f;
-    private float _maxThrusterEnergy;
-    private float _boostDelay = 2f;
-    private bool _canBoost = true;
-    private float _maxBoost = 15f;
-    private float _currentBoost = 0f;
-    private float _energyPerFrame = 0.05f;
+    //Thrusters
+    private Thrusters _thrusters;
 
     //Fire properties
     [SerializeField]
     private float _fireDelay = 0.2f;
     private float _canShoot = -1f;
-
-    //thrusters use
-    private bool _isBoosting;
 
     //bounds of field
     private float _xLimit = 10f;
@@ -71,8 +61,6 @@ public class Player : MonoBehaviour
     private AudioClip[] _audioClips;
     //AudioSource for proper trigger sounds
     private AudioSource _properAudioSource;
-    //AudioSource for constant movement sounds
-    private AudioSource _movementAudioSource;    
 
     void Start()
     {
@@ -82,13 +70,10 @@ public class Player : MonoBehaviour
         _spawnManager = GameObject.Find("Spawn_Manager").GetComponent<SpawnManager>();
         _uiManager = GameObject.Find("Canvas").GetComponent<UIManager>();
         _properAudioSource = GetComponent<AudioSource>();
-        _movementAudioSource = GameObject.Find("Player_Movement_Sounds").GetComponent<AudioSource>();
         _shieldBehavior = _shield.GetComponent<Shield>();
         _animator = GetComponent<Animator>();
         _camShake = Camera.main.GetComponent<CameraShake>();
-
-        _maxThrusterEnergy = _thrusterEnergy;
-        _maxMagazine = _magazine;
+        _thrusters = GetComponentInChildren<Thrusters>();
 
         if (_spawnManager is null)
         {
@@ -105,11 +90,6 @@ public class Player : MonoBehaviour
             Debug.LogError("Trigger Audio Source is NULL");
         }
 
-        if (_movementAudioSource is null)
-        {
-            Debug.LogError("Movement Audio Source is NULL");
-        }
-
         if (_shieldBehavior is null)
         {
             Debug.LogError("Shield script is NULL");
@@ -124,7 +104,13 @@ public class Player : MonoBehaviour
         {
             Debug.LogError("ShakeCamera script is NULL");
         }
+        
+        if (_thrusters is null)
+        {
+            Debug.LogError("Thrusters script is NULL");
+        }
 
+        _maxMagazine = _magazine;
         _lives = _maxLives;
         _currentShot = _shots[0];
         _uiManager.UpdateLives(_lives);
@@ -164,90 +150,17 @@ public class Player : MonoBehaviour
         Vector3 dir = new Vector3(hInput, vInput, 0);
 
         // move player with or without boost
-        if (Input.GetKey(KeyCode.LeftShift) && _canBoost)
+        if (Input.GetKey(KeyCode.LeftShift) && _thrusters.CanBoost)
         {
-            //stop movement sound if it's playing
-            if (!_isBoosting)
-            {
-                _movementAudioSource.Stop();
-                _isBoosting = true;
-            }
-
-            //play the boost sound if it's not playing
-            if (!_movementAudioSource.isPlaying)
-            {
-                PlayMovementAudio(3);
-            }
-            
-            transform.Translate(dir * _speed * _speedBoost * Time.deltaTime);
-
-            //waste energy
-            _thrusterEnergy -= _energyPerFrame;
-
-            //energy available?
-            if (_thrusterEnergy <= 0f)
-            {
-                _canBoost = false;
-                _thrusterEnergy = 0f;
-            }
-
-            //sum wasted energy to reach the threshold
-            _currentBoost += _energyPerFrame;
-
-            //threshold reached
-            if(_currentBoost >= _maxBoost)
-            {
-                StartCoroutine(ThrusterNeedsBreak());
-            }
-
-            //Update UI
-            _uiManager.UpdateBarEnergy(_thrusterEnergy, _maxThrusterEnergy);
-            _uiManager.UpdateThresholdEnergy(_currentBoost, _maxBoost);
+            transform.Translate(_speed * _speedBoost * Time.deltaTime * dir);
+            _thrusters.UseThrusters();
         }
         else
         {
-            //stop boost sound if it's playing
-            if (_isBoosting)
-            {
-                _movementAudioSource.Stop();
-                _isBoosting = false;
-            }
-
-            //play the movement sound if it's not playing
-            if (!_movementAudioSource.isPlaying)
-            {
-                PlayMovementAudio(4);
-            }
-            
-            transform.Translate(dir * _speed * Time.deltaTime);
-
-            //lower the energy wasted in a single boost
-            if(_currentBoost > 0f)
-            {
-                _currentBoost -= (_energyPerFrame * 2);
-                //Update UI
-                _uiManager.UpdateThresholdEnergy(_currentBoost, _maxBoost);
-            }
+            transform.Translate(_speed * Time.deltaTime * dir);
+            if (_thrusters.AreHot)
+                _thrusters.FreezeThrusters();
         }
-    }
-
-    IEnumerator ThrusterNeedsBreak()
-    {
-        //Deactivate thrusters
-        _canBoost = false;
-
-        //play animation
-        _uiManager.ThresholdReached();
-
-        //wait for the delay to activate thrusters
-        yield return new WaitForSeconds(_boostDelay);
-
-        //energy remaining? activate thrusters
-        if (_thrusterEnergy > 0f)
-        {
-            _canBoost = true;
-        }
-        _currentBoost = 0f;
     }
 
     void LimitSpace()
@@ -416,12 +329,8 @@ public class Player : MonoBehaviour
             case 0: //Triple shot
                 SetCurrentShot(1);
                 break;
-            case 1:// thruster energy unit refill
-                _thrusterEnergy += (_maxBoost * 2f);
-                if (_thrusterEnergy > _maxThrusterEnergy)
-                    _thrusterEnergy = _maxThrusterEnergy;
-                _uiManager.UpdateBarEnergy(_thrusterEnergy, _maxThrusterEnergy);
-                _canBoost = true;
+            case 1:// thruster energy refill
+                _thrusters.RefillPower();
                 break;
             case 2: // shield
                 if (_shield.activeSelf)
@@ -509,15 +418,6 @@ public class Player : MonoBehaviour
         {
             _properAudioSource.clip = _audioClips[index];
             _properAudioSource.Play();
-        }
-    }
-
-    void PlayMovementAudio(int index)
-    {
-        if (index < _audioClips.Length && index >= 0)
-        {
-            _movementAudioSource.clip = _audioClips[index];
-            _movementAudioSource.Play();
         }
     }
 }

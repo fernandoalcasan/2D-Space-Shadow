@@ -2240,7 +2240,6 @@ MonoBehaviour:
   _speed: 5
   _maxLives: 3
   _magazine: 30
-  _thrusterEnergy: 100
   _fireDelay: 0.2
   _shots:
   - {fileID: 3257339953780460438, guid: 34f0e149d003986468269c7b3e3b1d79, type: 3}
@@ -2754,6 +2753,7 @@ GameObject:
   - component: {fileID: 1421247631}
   - component: {fileID: 1421247632}
   - component: {fileID: 1421247633}
+  - component: {fileID: 1421247634}
   m_Layer: 0
   m_Name: Thruster
   m_TagString: Untagged
@@ -2845,6 +2845,25 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorControllerStateOnDisable: 0
+--- !u!114 &1421247634
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1421247630}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e03dc4c3b3bd66c4182ade2926fc9c02, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _thrusterEnergy: 100
+  _boostDelay: 2
+  _maxBoost: 15
+  _energyPerSecond: 7.5
+  _audioClips:
+  - {fileID: 8300000, guid: 1a2d386e6101ed544806030470aaa46d, type: 3}
+  - {fileID: 8300000, guid: 441581f2a7603c84fad117670943c3eb, type: 3}
 --- !u!1 &1457932018
 GameObject:
   m_ObjectHideFlags: 0
@@ -3243,11 +3262,11 @@ AudioSource:
   m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
-  m_audioClip: {fileID: 0}
-  m_PlayOnAwake: 0
-  m_Volume: 0.1
+  m_audioClip: {fileID: 8300000, guid: 441581f2a7603c84fad117670943c3eb, type: 3}
+  m_PlayOnAwake: 1
+  m_Volume: 0.6
   m_Pitch: 1
-  Loop: 0
+  Loop: 1
   Mute: 0
   Spatialize: 0
   SpatializePostEffects: 0
