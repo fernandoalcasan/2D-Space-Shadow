@@ -67,32 +67,42 @@ public class GameManager : MonoBehaviour
     public IEnumerator NextWave()
     {
         _currentWave++;
-        _currentEnemies = _enemiesPerWave * _currentWave;
 
         if(_currentWave == _maxWaves)
         {
+            _currentEnemies = 1;
             _uiManager.DisplayNewWave("Final Wave", _currentEnemies);
+            yield return new WaitForSeconds(3f);
+            _uiManager.EnableBossUI();
+            _spawnManager.SpawnNewWave(_currentEnemies, 0f, true);
         }
         else
         {
+            _currentEnemies = _enemiesPerWave * _currentWave;
             _uiManager.DisplayNewWave("Wave " + _currentWave, _currentEnemies);
+            yield return new WaitForSeconds(3f);
+            UpdateSpawnTime();
+            _spawnManager.SpawnNewWave(_currentEnemies, _currentDelay, false);
         }
-        yield return new WaitForSeconds(3f);
+    }
 
+    private void UpdateSpawnTime()
+    {
         _currentDelay -= (_currentDelay * _reduceDelayPercentage);
 
         if (_currentDelay < 0f)
             _currentDelay = 0;
-
-        _spawnManager.SpawnNewWave(_currentEnemies, _currentDelay);
     }
 
     public void EnemyDestroyed()
     {
         _currentEnemies--;
-        _uiManager.UpdateWaveEnemies(_currentEnemies, _enemiesPerWave * _currentWave);
-        
-        if(_currentEnemies == 0)
+        if (_currentWave != _maxWaves)
+            _uiManager.UpdateWaveEnemies(_currentEnemies, _enemiesPerWave * _currentWave);
+        else
+            _uiManager.UpdateWaveEnemies(_currentEnemies, 1);
+
+        if (_currentEnemies == 0)
         {
             if(_currentWave == _maxWaves)
             {

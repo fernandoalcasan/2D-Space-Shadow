@@ -7,6 +7,8 @@ public class Enemy : MonoBehaviour
 {
     [Header("Enemy Properties")]
     [SerializeField]
+    protected int _lives;
+    [SerializeField]
     private float _speed;
     protected float Speed { get => _speed; }
 
@@ -34,7 +36,7 @@ public class Enemy : MonoBehaviour
     [SerializeField]
     protected GameObject shot;
     protected Animator anim;
-    private Player _player;
+    protected Player _player;
     private GameManager _gameManager;
     
     protected float canShoot = -1f;
@@ -166,21 +168,31 @@ public class Enemy : MonoBehaviour
     //COLLISIONS////////////////////
     ////////////////////////////////
 
-    void OnTriggerEnter2D(Collider2D other)
+    protected virtual void OnTriggerEnter2D(Collider2D other)
     {
+        if (_dead)
+            return;
+
         //Collition with player
         if (other.CompareTag("Player"))
         {
             int dir = _player.GetDamageDirection(transform.position);
             _player.GetDamage(dir);
-            DeathSequence();
+            GetDamage();
         }
         //Collition with Laser
         else if (other.CompareTag("PlayerShot"))
         {
             Destroy(other.gameObject);
-            DeathSequence();
+            GetDamage();
         }
+    }
+
+    public void GetDamage()
+    {
+        _lives--;
+        if (_lives < 1)
+            DeathSequence();
     }
 
     ////////////////////////////////

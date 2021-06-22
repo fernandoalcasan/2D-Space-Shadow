@@ -63,7 +63,11 @@ public class UIManager : MonoBehaviour
 
     //Animator reference
     private Animator _thresholdAnim;
-    
+
+    //Final Boss life mask reference
+    [SerializeField]
+    private Image _bossLifeMask;
+
     //Game Manager reference
     private GameManager _gameManager;
 
@@ -99,6 +103,7 @@ public class UIManager : MonoBehaviour
         }
 
         Thrusters.OnThrusterUsage += UpdateEnergyUIs;
+        FinalBoss.OnBossDamage += UpdateBossLife;
     }
 
     ////////////////////////////////
@@ -167,10 +172,18 @@ public class UIManager : MonoBehaviour
 
     public void OnPlayerDeath()
     {
+        GameOver(false);
+    }
+
+    private void GameOver(bool win)
+    {
         _gameOverText.gameObject.SetActive(true);
         _restartText.gameObject.SetActive(true);
         StartTextAnimation(ref _gameOverText, -1f);
         _gameManager.GameOver();
+
+        if (win)
+            _gameOverText.text = "You Win!";
     }
 
     public void UpdateCurrentShot(int index)
@@ -193,6 +206,22 @@ public class UIManager : MonoBehaviour
     public void UpdateWaveEnemies(int value, int maxValue)
     {
         _currentEnemiesText.text = "Enemies: " + value + "/" + maxValue;
+    }
+
+    public void EnableBossUI()
+    {
+        _bossLifeMask.transform.parent.gameObject.SetActive(true);
+    }
+
+    public void UpdateBossLife(float life)
+    {
+        _bossLifeMask.fillAmount = life;
+
+        if (life == 0f)
+        {
+            GameOver(true);
+            _bossLifeMask.transform.parent.gameObject.SetActive(false);
+        }
     }
 
     ////////////////////////////////

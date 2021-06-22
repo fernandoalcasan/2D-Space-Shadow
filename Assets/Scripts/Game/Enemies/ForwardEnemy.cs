@@ -56,7 +56,7 @@ public class ForwardEnemy : Enemy
     protected override void MoveEnemy()
     {
         base.MoveEnemy();
-        transform.Translate(Vector3.down * Speed * Time.deltaTime);
+        transform.Translate(Speed * Time.deltaTime * Vector3.down);
     }
 
     ////////////////////////////////

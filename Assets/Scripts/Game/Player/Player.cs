@@ -235,7 +235,10 @@ public class Player : MonoBehaviour
     ////////////////////////////////
 
     public void GetDamage(int quadrant)
-    {        
+    {
+        if (_shield.activeSelf)
+            return;
+
         _lives--;
         _uiManager.UpdateLives(_lives);
 

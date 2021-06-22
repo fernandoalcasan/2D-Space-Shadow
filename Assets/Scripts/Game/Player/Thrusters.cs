@@ -152,4 +152,10 @@ public class Thrusters : MonoBehaviour
             _movementAudioSource.Play();
         }
     }
+
+    private void OnDestroy()
+    {
+        OnThrusterUsage = null;
+        _movementAudioSource.Stop();
+    }
 }

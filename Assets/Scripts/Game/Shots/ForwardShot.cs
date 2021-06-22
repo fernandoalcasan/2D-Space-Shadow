@@ -10,11 +10,11 @@ public class ForwardShot : Shot
         base.Update();
         if (IsEnemyShot)
         {
-            transform.Translate(Vector3.down * Speed * Time.deltaTime);
+            transform.Translate(Speed * Time.deltaTime * Vector3.down);
         }
         else
         {
-            transform.Translate(Vector3.up * Speed * Time.deltaTime);
+            transform.Translate(Speed * Time.deltaTime * Vector3.up);
         }
     }
 }

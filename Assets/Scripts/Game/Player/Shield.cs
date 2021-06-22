@@ -79,7 +79,7 @@ public class Shield : MonoBehaviour
             else if (other.CompareTag("Enemy"))
             {
                 if (other.TryGetComponent<Enemy>(out var enemy))
-                    enemy.DeathSequence();
+                    enemy.GetDamage();
                 else
                     Debug.LogError("Enemy reference is NULL");
                 DamageShield();
