@@ -3,9 +3,14 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class UIManager : MonoBehaviour
 {
+    [Header("Components")]
+    [SerializeField]
+    private GameObject _pauseMenu;
+
     [Header("Text Elements")]
     // UI score text
     [SerializeField]
@@ -104,6 +109,8 @@ public class UIManager : MonoBehaviour
 
         Thrusters.OnThrusterUsage += UpdateEnergyUIs;
         FinalBoss.OnBossDamage += UpdateBossLife;
+        GameManager.OnGamePause += EnablePauseMenu;
+        _uiAudioPlayer.ignoreListenerPause = true;
     }
 
     ////////////////////////////////
@@ -213,7 +220,7 @@ public class UIManager : MonoBehaviour
         _bossLifeMask.transform.parent.gameObject.SetActive(true);
     }
 
-    public void UpdateBossLife(float life)
+    private void UpdateBossLife(float life)
     {
         _bossLifeMask.fillAmount = life;
 
@@ -222,6 +229,48 @@ public class UIManager : MonoBehaviour
             GameOver(true);
             _bossLifeMask.transform.parent.gameObject.SetActive(false);
         }
+    }
+
+    ////////////////////////////////
+    //PAUSE MENU////////////////////
+    ////////////////////////////////
+
+    private void EnablePauseMenu()
+    {
+        if(!_pauseMenu.activeSelf)
+            PlayAudio(1);
+        _pauseMenu.SetActive(!_pauseMenu.activeSelf);
+    }
+
+    public void ResumeBtn()
+    {
+        if (!(GameManager.OnGamePause is null))
+            GameManager.OnGamePause();
+        else
+            Debug.LogError("Game Manager pause action is NULL");
+    }
+
+    public void RestartBtn()
+    {
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+
+        GameManager.OnGamePause -= EnablePauseMenu;
+        if (!(GameManager.OnGamePause is null))
+            GameManager.OnGamePause();
+        else
+            Debug.LogError("Game Manager pause action is NULL");
+
+    }
+    
+    public void MainMenuBtn()
+    {
+        SceneManager.LoadScene(0);
+
+        GameManager.OnGamePause -= EnablePauseMenu;
+        if (!(GameManager.OnGamePause is null))
+            GameManager.OnGamePause();
+        else
+            Debug.LogError("Game Manager pause action is NULL");
     }
 
     ////////////////////////////////
@@ -261,8 +310,16 @@ public class UIManager : MonoBehaviour
     {
         if (index < _uiSounds.Length && index >= 0)
         {
-            _uiAudioPlayer.clip = _uiSounds[index];
-            _uiAudioPlayer.Play();
+            _uiAudioPlayer.PlayOneShot(_uiSounds[index]);
         }
+    }
+
+    ////////////////////////////////
+    //ON DESTROY////////////////////
+    ////////////////////////////////
+
+    private void OnDestroy()
+    {
+        GameManager.OnGamePause -= EnablePauseMenu;
     }
 }

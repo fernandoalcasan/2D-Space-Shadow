@@ -7,21 +7,24 @@ public class FinalBoss : Enemy
 {
     public static Action<float> OnBossDamage;
 
+    [Header("Boss Properties")]
     [SerializeField]
     private float _delayOnBehavior;
     [SerializeField]
     private float _delayOnShot;
     [SerializeField] [Range(0f, 1f)]
     private float _difficultyFactor;
-    private WaitForSeconds _delayBetBehav;
-    private WaitForSeconds _delayBetShots;
     [SerializeField]
     private float _degPerSecond;
+    
+    [Header("Portals")]
     [SerializeField]
     private GameObject _portal;
     [SerializeField]
     private GameObject _endPortal;
-
+    
+    private WaitForSeconds _delayBetBehav;
+    private WaitForSeconds _delayBetShots;
     private float _maxLives;
     private Vector3 _portalPos;
     private bool _shooting;
@@ -94,8 +97,6 @@ public class FinalBoss : Enemy
                 case 1:
                     anim.SetTrigger("Teleport");
                     break;
-                default:
-                    break;
             }
         }
     }
@@ -122,7 +123,6 @@ public class FinalBoss : Enemy
             if ((_lives - 1) % 10 == 0)
                 AddDifficulty();
         }
-        //Collition with Laser
         else if (other.CompareTag("PlayerShot"))
         {
             if (!(OnBossDamage is null))

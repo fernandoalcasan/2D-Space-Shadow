@@ -2,9 +2,12 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using System;
 
 public class GameManager : MonoBehaviour
 {
+    public static Action OnGamePause;
+
     private bool _gameOver;
 
     [SerializeField]
@@ -27,10 +30,15 @@ public class GameManager : MonoBehaviour
     private void Start()
     {
         _currentDelay = _delayToSpawnEnemy;
+        OnGamePause = () =>
+        {
+            Time.timeScale = Time.timeScale == 1 ? 0 : 1;
+            AudioListener.pause = !AudioListener.pause;
+        };
         _uiManager = GameObject.Find("Canvas").GetComponent<UIManager>();
         _spawnManager = GameObject.Find("Spawn_Manager").GetComponent<SpawnManager>();
-        
-        if(_uiManager is null)
+
+        if (_uiManager is null)
         {
             Debug.LogError("UI Manager is NULL");
         }
@@ -49,9 +57,11 @@ public class GameManager : MonoBehaviour
             SceneManager.LoadScene(1);
         }
 
-        if(Input.GetKeyDown(KeyCode.Escape))
+        if (Input.GetKeyDown(KeyCode.Escape))
         {
-            Application.Quit();
+            if (!(OnGamePause is null))
+                OnGamePause();
+            //Application.Quit();
         }
     }
 

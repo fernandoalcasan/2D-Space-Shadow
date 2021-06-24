@@ -188,7 +188,7 @@ public class Player : MonoBehaviour
         if(_magazine <= 0)
         {
             //Play empty mag audio
-            PlayTriggerAudio(5);
+            PlayTriggerAudio(3);
             return;
         }
 
