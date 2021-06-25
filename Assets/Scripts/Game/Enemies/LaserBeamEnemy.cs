@@ -76,7 +76,7 @@ public class LaserBeamEnemy : ArcEnemy
                 Instantiate(shot, beamPos, leftRot);
                 break;
         }
-        PlayAudio(1);
+        AudioManager.audioSource.PlayOneShot(_audioClips[1], 0.5f);
 
         StartCoroutine(StopShootingSequence());
     }

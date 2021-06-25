@@ -119,11 +119,6 @@ public class Shot : MonoBehaviour
                 DamagePlayer(other);
                 Destroy(gameObject);
             }
-            else if(other.CompareTag("PowerUp"))
-            {
-                Destroy(other.gameObject);
-                Destroy(gameObject);
-            }
         }
     }
 

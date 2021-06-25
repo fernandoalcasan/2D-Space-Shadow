@@ -1,10 +1,13 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
 
-[RequireComponent(typeof(Animator), typeof(AudioSource))]
+[RequireComponent(typeof(Animator))]
 public class Enemy : MonoBehaviour
 {
+    public static Action<int> OnEnemyDestroyed;
+
     [Header("Enemy Properties")]
     [SerializeField]
     protected int _lives;
@@ -29,15 +32,12 @@ public class Enemy : MonoBehaviour
 
     [Header("Audios")]
     [SerializeField]
-    private AudioClip[] _audioClips;
-    private AudioSource _properAudioSource;
+    protected AudioClip[] _audioClips;
 
     [Header("References")]
     [SerializeField]
     protected GameObject shot;
     protected Animator anim;
-    protected Player _player;
-    private GameManager _gameManager;
     
     protected float canShoot = -1f;
 
@@ -47,29 +47,11 @@ public class Enemy : MonoBehaviour
     public virtual void Start()
     {
         canShoot = _fireDelay;
-        _player = GameObject.Find("Player").GetComponent<Player>();
-        _gameManager = GameObject.Find("Game_Manager").GetComponent<GameManager>();
         anim = GetComponent<Animator>();
-        _properAudioSource = GetComponent<AudioSource>();
-
-        if (_player is null)
-        {
-            Debug.LogError("The Player is NULL");
-        }
-
-        if (_gameManager is null)
-        {
-            Debug.LogError("The Game Manager is NULL");
-        }
 
         if (anim is null)
         {
             Debug.LogError("The animator is NULL");
-        }
-
-        if (_properAudioSource is null)
-        {
-            Debug.LogError("AudioSource is NULL");
         }
     }
 
@@ -136,12 +118,12 @@ public class Enemy : MonoBehaviour
 
     protected float GetRandomX()
     {
-        return Random.Range(-_xLimit, _xLimit);
+        return UnityEngine.Random.Range(-_xLimit, _xLimit);
     }
 
     protected float GetRandomY()
     {
-        return Random.Range(-_yLimit, _yLimit);
+        return UnityEngine.Random.Range(-_yLimit, _yLimit);
     }
 
     ////////////////////////////////
@@ -156,7 +138,7 @@ public class Enemy : MonoBehaviour
         Instantiate(shot, transform.position, transform.rotation);
 
         //Shot AUDIO
-        PlayAudio(1);
+        AudioManager.audioSource.PlayOneShot(_audioClips[1], 1f);
     }
 
     public void PowerUpFound()
@@ -176,8 +158,13 @@ public class Enemy : MonoBehaviour
         //Collition with player
         if (other.CompareTag("Player"))
         {
-            int dir = _player.GetDamageDirection(transform.position);
-            _player.GetDamage(dir);
+            if (other.TryGetComponent<Player>(out var player))
+            {
+                int dir = player.GetDamageDirection(transform.position);
+                player.GetDamage(dir);
+            }
+            else
+                Debug.LogError("Player script is NULL");
             GetDamage();
         }
         //Collition with Laser
@@ -201,7 +188,7 @@ public class Enemy : MonoBehaviour
 
     public void DeathSequence()
     {
-        PlayAudio(0);
+        AudioManager.audioSource.PlayOneShot(_audioClips[0], 1f);
 
         if (transform.childCount > 0)
         {
@@ -219,22 +206,9 @@ public class Enemy : MonoBehaviour
         anim.SetTrigger("OnEnemyDeath");
         _speed = 0f;
 
-        _player.IncreaseScore(_scoreValue);
-        _gameManager.EnemyDestroyed();
-
+        if (!(OnEnemyDestroyed is null))
+            OnEnemyDestroyed(_scoreValue);
+        
         Destroy(gameObject, _deathTime);
-    }
-
-    ////////////////////////////////
-    //AUDIO/////////////////////////
-    ////////////////////////////////
-
-    protected void PlayAudio(int index)
-    {
-        if (index < _audioClips.Length && index >= 0)
-        {
-            _properAudioSource.clip = _audioClips[index];
-            _properAudioSource.Play();
-        }
     }
 }

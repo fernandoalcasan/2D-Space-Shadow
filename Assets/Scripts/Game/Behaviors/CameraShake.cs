@@ -25,6 +25,7 @@ public class CameraShake : MonoBehaviour
     private Vector3 _newPos;
     private Vector3 _invertXYPos;
     private Vector3 _newRot;
+    private int _playerLives;
 
     // Start is called before the first frame update
     void Start()
@@ -38,9 +39,23 @@ public class CameraShake : MonoBehaviour
         _newPos = new Vector3(_newXPos, -_newYPos, Camera.main.transform.position.z);
         _invertXYPos = new Vector3(-1, -1, 1);
         _newRot = new Vector3(0, 0, _newRotation);
+
+        Player.OnPlayerlives += ShouldShake;
+        _playerLives = 3;
     }
 
-    public IEnumerator ShakeCamera()
+    private void ShouldShake(int lives)
+    {
+        if (lives > _playerLives)
+        {
+            _playerLives = lives;
+            return;
+        }
+
+        StartCoroutine(ShakeCamera());
+    }
+
+    private IEnumerator ShakeCamera()
     {
         //Change values between delays to simulate camera shake
         Camera.main.fieldOfView = _newFOV;
@@ -60,4 +75,8 @@ public class CameraShake : MonoBehaviour
         Camera.main.transform.eulerAngles = Vector3.zero;
     }
 
+    private void OnDestroy()
+    {
+        Player.OnPlayerlives -= ShouldShake;
+    }
 }

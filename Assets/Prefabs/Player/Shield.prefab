@@ -119,6 +119,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _isEnemyShield: 0
   _resistance: 3
+  _audioClips:
+  - {fileID: 8300000, guid: 8cd33d701148a05479a9a4e7cf197954, type: 3}
 --- !u!70 &334804700
 CapsuleCollider2D:
   m_ObjectHideFlags: 0

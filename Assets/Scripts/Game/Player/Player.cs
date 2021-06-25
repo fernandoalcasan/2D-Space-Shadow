@@ -1,22 +1,24 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
 
 public class Player : MonoBehaviour
 {
-    public delegate void OnAttract();
-    public static event OnAttract onAttract;
+    public static Action<bool> OnAttraction;
+    public static Action<int> OnPlayerlives;
+    public static Action<int> OnPlayerShot;
+    public static Action<int> OnPlayerSpecialShot;
 
     // Properties of the player
     [SerializeField]
-    private float _speed = 5f;
-    private float _speedBoost = 2f;
+    private float _speed;
+    private readonly float _speedBoost = 2f;
     private int _lives;
     [SerializeField]
-    private int _maxLives = 3;
-    private int _score;
+    private int _maxLives;
     [SerializeField]
-    private int _magazine = 30;
+    private int _magazine;
     private int _maxMagazine;
 
     //Thrusters
@@ -24,12 +26,14 @@ public class Player : MonoBehaviour
 
     //Fire properties
     [SerializeField]
-    private float _fireDelay = 0.2f;
+    private float _fireDelay;
     private float _canShoot = -1f;
 
     //bounds of field
-    private float _xLimit = 10f;
-    private float _yLimit = 5.5f;
+    [SerializeField]
+    private float _xLimit;
+    [SerializeField]
+    private float _yLimit;
 
     //prefabs for shots
     [SerializeField]
@@ -41,14 +45,6 @@ public class Player : MonoBehaviour
     private GameObject _shield;
     private Shield _shieldBehavior;
 
-    //spawn manager connection
-    private SpawnManager _spawnManager;
-    // ui manager connection
-    private UIManager _uiManager;
-
-    // Camera shake reference
-    private CameraShake _camShake;
-
     //Damage VFX objects
     [SerializeField]
     private GameObject[] _damage = new GameObject[2];
@@ -59,36 +55,15 @@ public class Player : MonoBehaviour
     //Audioclips
     [SerializeField]
     private AudioClip[] _audioClips;
-    //AudioSource for proper trigger sounds
-    private AudioSource _properAudioSource;
 
     void Start()
     {
         // Set the player position = 0
         transform.position = new Vector3(0, 0, 0);
 
-        _spawnManager = GameObject.Find("Spawn_Manager").GetComponent<SpawnManager>();
-        _uiManager = GameObject.Find("Canvas").GetComponent<UIManager>();
-        _properAudioSource = GetComponent<AudioSource>();
         _shieldBehavior = _shield.GetComponent<Shield>();
         _animator = GetComponent<Animator>();
-        _camShake = Camera.main.GetComponent<CameraShake>();
         _thrusters = GetComponentInChildren<Thrusters>();
-
-        if (_spawnManager is null)
-        {
-            Debug.LogError("The spawn manager is NULL");
-        }
-
-        if(_uiManager is null)
-        {
-            Debug.LogError("The UI Manager is NULL");
-        }
-
-        if(_properAudioSource is null)
-        {
-            Debug.LogError("Trigger Audio Source is NULL");
-        }
 
         if (_shieldBehavior is null)
         {
@@ -99,11 +74,6 @@ public class Player : MonoBehaviour
         {
             Debug.LogError("Player animator is NULL");
         }
-
-        if (_camShake is null)
-        {
-            Debug.LogError("ShakeCamera script is NULL");
-        }
         
         if (_thrusters is null)
         {
@@ -111,10 +81,10 @@ public class Player : MonoBehaviour
         }
 
         _maxMagazine = _magazine;
+        //To shoot the asteroid
+        _magazine++;
         _lives = _maxLives;
         _currentShot = _shots[0];
-        _uiManager.UpdateLives(_lives);
-        _uiManager.UpdateAmmo(_magazine);
     }
 
     void Update()
@@ -125,14 +95,23 @@ public class Player : MonoBehaviour
         //Instantiate laser prefab with spacebar if not in cool down
         if (Input.GetKeyDown(KeyCode.Space) && Time.time > _canShoot)
         {
+            if (GameManager.gamePaused)
+                return;
             ShootLaser();
         }
 
-        if(Input.GetKeyDown(KeyCode.C) || Input.GetKeyUp(KeyCode.C))
+        if(Input.GetKeyDown(KeyCode.C))
         {
-            if(!(onAttract is null))
+            if(!(OnAttraction is null))
             {
-                onAttract();
+                OnAttraction(true);
+            }
+        }
+        else if(Input.GetKeyUp(KeyCode.C))
+        {
+            if (!(OnAttraction is null))
+            {
+                OnAttraction(false);
             }
         }
     }
@@ -187,47 +166,35 @@ public class Player : MonoBehaviour
     {
         if(_magazine <= 0)
         {
-            //Play empty mag audio
-            PlayTriggerAudio(3);
+            AudioManager.audioSource.PlayOneShot(_audioClips[3], 0.3f);
             return;
         }
 
         Instantiate(_currentShot, transform.position, transform.rotation);
-        UpdateFireRate();
-        UpdateAmmo(--_magazine);
-        PlayTriggerAudio(0);
-    }
 
-    void UpdateFireRate()
-    {
-        //Update delay time to shoot again
+        //Update Fire Rate
         _canShoot = Time.time + _fireDelay;
-    }
-    
-    void UpdateAmmo(int value)
-    {
-        _magazine = value;
-        _uiManager.UpdateAmmo(_magazine);
+        //update ammo
+        _magazine--;
+
+        if (!(OnPlayerShot is null))
+            OnPlayerShot(_magazine);
+
+        AudioManager.audioSource.PlayOneShot(_audioClips[0], 1f);
     }
 
-    void SetCurrentShot(int index)
+    private void SetCurrentShot(int index)
     {
         _currentShot = _shots[index];
-        _uiManager.UpdateCurrentShot(index);
+        if (!(OnPlayerSpecialShot is null))
+            OnPlayerSpecialShot(index);
         SetCurrentShotBehavior(index);
     }
 
-    void SetCurrentShotBehavior(int index)
+    private void SetCurrentShotBehavior(int index)
     {
-        SetShotFireRate(index);
-    }
-
-    void SetShotFireRate(int index)
-    {
-        if (_shots[index].TryGetComponent<ForwardShot>(out var forwardShot))
-        {
-            _fireDelay = forwardShot.FireRate;
-        }
+        if (_shots[index].TryGetComponent<Shot>(out var shot))
+            _fireDelay = shot.FireRate;
     }
 
     ////////////////////////////////
@@ -240,14 +207,12 @@ public class Player : MonoBehaviour
             return;
 
         _lives--;
-        _uiManager.UpdateLives(_lives);
+        if (!(OnPlayerlives is null))
+            OnPlayerlives(_lives);
 
         //Play damage audio
         if (_lives > 0)
-            PlayTriggerAudio(1);
-
-        //shake camera
-        StartCoroutine(_camShake.ShakeCamera());
+            AudioManager.audioSource.PlayOneShot(_audioClips[1], 1f);
 
         //If lives are less or equal to the number of damage visualizers
         if (_lives <= _damage.Length)
@@ -257,10 +222,7 @@ public class Player : MonoBehaviour
         
         if (_lives < 1)
         {
-            //Play explosion audio
-            AudioSource.PlayClipAtPoint(_audioClips[2], Camera.main.transform.position);
-            _spawnManager.OnPlayerDeath();
-            _uiManager.OnPlayerDeath();
+            AudioManager.audioSource.PlayOneShot(_audioClips[2], 1f);
             Destroy(gameObject);
         }
     }
@@ -343,12 +305,14 @@ public class Player : MonoBehaviour
                 break;
             case 3: //extra life
                 _lives++;
-                _uiManager.UpdateLives(_lives);
+                if (!(OnPlayerlives is null))
+                    OnPlayerlives(_lives);
                 RestoreOneHealthVisualizer();
                 break;
             case 4: //ammo refill
                 _magazine = _maxMagazine;
-                _uiManager.UpdateAmmo(_magazine);
+                if (!(OnPlayerShot is null))
+                    OnPlayerShot(_magazine);
                 break;
             case 5: //Multidirectional shot
                 SetCurrentShot(2);
@@ -398,29 +362,6 @@ public class Player : MonoBehaviour
                 if (_currentShot == _shots[3])
                     SetCurrentShot(0);
                 break;
-        }
-    }
-
-    ////////////////////////////////
-    //SCORE/////////////////////////
-    ////////////////////////////////
-
-    public void IncreaseScore(int value)
-    {
-        _score += value;
-        _uiManager.UpdateScore(_score);
-    }
-
-    ////////////////////////////////
-    //AUDIO/////////////////////////
-    ////////////////////////////////
-    
-    void PlayTriggerAudio(int index)
-    {
-        if(index < _audioClips.Length && index >= 0)
-        {
-            _properAudioSource.clip = _audioClips[index];
-            _properAudioSource.Play();
         }
     }
 }

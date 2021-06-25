@@ -11,6 +11,8 @@ public class Shield : MonoBehaviour
     private int _maxResistance;
     private SpriteRenderer _shieldRenderer;
     private Color _normal, _damage1, _damage2;
+    [SerializeField]
+    private AudioClip[] _audioClips;
 
     // Start is called before the first frame update
     void Start()
@@ -33,6 +35,11 @@ public class Shield : MonoBehaviour
     {
         _resistance--;
         SetShieldColor();
+
+        if (_audioClips.Length > 0)
+            AudioManager.audioSource.PlayOneShot(_audioClips[0], .5f);
+        else
+            Debug.LogError("Audio missing");
 
         if(_resistance == 0)
         {

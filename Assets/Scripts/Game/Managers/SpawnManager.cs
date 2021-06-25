@@ -52,6 +52,14 @@ public class SpawnManager : MonoBehaviour
     public static List<Transform> enemyPool;
     public static Func<Vector3, Transform> NearestEnemy;
 
+    [Header("Spawning Properties")]
+    [SerializeField]
+    private float _delayToSpawnEnemy;
+    private float _currentDelay;
+    [SerializeField]
+    [Range(0f, 1f)]
+    private float _reduceDelayPercentage;
+
     [Header("Enemy features")]
     [SerializeField]
     private EnemyFeature[] _features;
@@ -82,20 +90,29 @@ public class SpawnManager : MonoBehaviour
 
     private void Start()
     {
+        _currentDelay = _delayToSpawnEnemy;
         enemyPool = new List<Transform>();
         NearestEnemy = (pos) => enemyPool.OrderBy(ePos => (ePos.position - pos).sqrMagnitude).FirstOrDefault();
 
         InitializePowerups();
+        GameManager.OnNewWave += SpawnNewWave;
+        GameManager.OnGameOver += GameOver;
     }
 
     ////////////////////////////////
     //PROPERTIES////////////////////
     ////////////////////////////////
 
-    public void SpawnNewWave(int num, float delay, bool isFinal)
+    private void SpawnNewWave()
     {
-        if(!isFinal)
-            StartCoroutine(SpawnEnemies(num, delay));
+        StartCoroutine(SpawnNewWaveAfter());
+    }
+
+    private IEnumerator SpawnNewWaveAfter()
+    {
+        yield return new WaitForSeconds(3f);
+        if(GameManager.currentWave < GameManager.maxWaves)
+            StartCoroutine(SpawnEnemies(GameManager.currentEnemies));
         else
             SpawnBoss();
     }
@@ -116,9 +133,10 @@ public class SpawnManager : MonoBehaviour
     //SPAWNING//////////////////////
     ////////////////////////////////
 
-    IEnumerator SpawnEnemies(int enemies, float delayToSpawn)
+    IEnumerator SpawnEnemies(int enemies)
     {
-        UpdateWaveProperties(delayToSpawn);
+        UpdateSpawnTime();
+        UpdateWaveProperties();
 
         if (!_wavesEnabled)
         {
@@ -186,14 +204,22 @@ public class SpawnManager : MonoBehaviour
         }
     }
 
+    private void UpdateSpawnTime()
+    {
+        _currentDelay -= (_currentDelay * _reduceDelayPercentage);
+
+        if (_currentDelay < 0f)
+            _currentDelay = 0;
+    }
+
     ////////////////////////////////
     //PROPERTIES////////////////////
     ////////////////////////////////
 
-    private void UpdateWaveProperties(float delay)
+    private void UpdateWaveProperties()
     {
-        _enemyDelay = new WaitForSeconds(delay);
-        _powerupDelay = new WaitForSeconds(delay * 1.5f);
+        _enemyDelay = new WaitForSeconds(_currentDelay);
+        _powerupDelay = new WaitForSeconds(_currentDelay * 1.5f);
 
         if (!_wavesEnabled)
             return;
@@ -211,8 +237,15 @@ public class SpawnManager : MonoBehaviour
     //ONDESTROY/////////////////////
     ////////////////////////////////
 
-    public void OnPlayerDeath()
+    private void GameOver(bool win)
     {
+        StopAllCoroutines();
         _doNotSpawn = true;
+    }
+
+    private void OnDestroy()
+    {
+        GameManager.OnNewWave -= SpawnNewWave;
+        GameManager.OnGameOver -= GameOver;
     }
 }

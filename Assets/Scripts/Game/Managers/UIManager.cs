@@ -73,9 +73,6 @@ public class UIManager : MonoBehaviour
     [SerializeField]
     private Image _bossLifeMask;
 
-    //Game Manager reference
-    private GameManager _gameManager;
-
     //Audio Source & clips
     private AudioSource _uiAudioPlayer;
 
@@ -83,21 +80,16 @@ public class UIManager : MonoBehaviour
     [SerializeField]
     private AudioClip[] _uiSounds;
 
+    private int _score;
 
-    // Start is called before the first frame update
     void Start()
     {
         _scoreText.text = "Score: 0";
         _currentAmmoImg = 0;
         _gameOverText.gameObject.SetActive(false);
-        _gameManager = GameObject.Find("Game_Manager").GetComponent<GameManager>();
         _thresholdAnim = GameObject.Find("Threshold_img").GetComponent<Animator>();
         _uiAudioPlayer = GameObject.Find("UI_Sounds").GetComponent<AudioSource>();
 
-        if (_gameManager is null)
-        {
-            Debug.LogError("Game Manager is NULL");
-        }
         if (_thresholdAnim is null)
         {
             Debug.LogError("Threshold animator is NULL");
@@ -110,6 +102,14 @@ public class UIManager : MonoBehaviour
         Thrusters.OnThrusterUsage += UpdateEnergyUIs;
         FinalBoss.OnBossDamage += UpdateBossLife;
         GameManager.OnGamePause += EnablePauseMenu;
+        GameManager.OnNewWave += DisplayWave;
+        GameManager.OnNewWave += UpdateWaveEnemies;
+        GameManager.OnGameOver += GameOver;
+        Enemy.OnEnemyDestroyed += UpdateEnemyProperties;
+        Player.OnPlayerShot += UpdateAmmo;
+        Player.OnPlayerSpecialShot += UpdateCurrentShot;
+        Player.OnPlayerlives += UpdateLives;
+
         _uiAudioPlayer.ignoreListenerPause = true;
     }
 
@@ -117,22 +117,27 @@ public class UIManager : MonoBehaviour
     //UPDATE UI/////////////////////
     ////////////////////////////////
 
-    public void UpdateScore(int value)
+    private void UpdateEnemyProperties(int scoreValue)
     {
-        _scoreText.text = "Score: " + value;
+        if(scoreValue > 0)
+        {
+            _score += scoreValue;
+            UpdateScore();
+        }
+        UpdateWaveEnemies();
     }
 
-    public void UpdateLives(int lives)
+    private void UpdateLives(int lives)
     {
         if(lives >= 0 && lives <= 3)
         {
             _livesImg.sprite = _liveSprites[lives];
             _extraLivesText.text = "";
+            if (lives == 0)
+                UpdateEnergyUIs(1f, 0f);
         }
         else
-        {
             _extraLivesText.text = "+" + (lives - 3);
-        }
     }
 
     private void UpdateEnergyUIs(float energy, float usage)
@@ -162,24 +167,18 @@ public class UIManager : MonoBehaviour
         }
     }
 
-    public void UpdateAmmo(int value)
+    private void UpdateAmmo(int value)
     {
         if(value > _maxAmmo)
-        {
             _maxAmmo = value;
-        }
+
         _ammoText.text = value + "/" + _maxAmmo;
     }
 
-    public void ThresholdReached()
+    private void ThresholdReached()
     {
         _thresholdAnim.SetTrigger("Overheat");
-        PlayAudio(0);
-    }
-
-    public void OnPlayerDeath()
-    {
-        GameOver(false);
+        AudioManager.audioSource.PlayOneShot(_uiSounds[0], 1f);
     }
 
     private void GameOver(bool win)
@@ -187,36 +186,47 @@ public class UIManager : MonoBehaviour
         _gameOverText.gameObject.SetActive(true);
         _restartText.gameObject.SetActive(true);
         StartTextAnimation(ref _gameOverText, -1f);
-        _gameManager.GameOver();
 
         if (win)
             _gameOverText.text = "You Win!";
     }
 
-    public void UpdateCurrentShot(int index)
+    private void UpdateCurrentShot(int index)
     {
         _ammoImgs[_currentAmmoImg].gameObject.SetActive(false);
         _ammoImgs[index].gameObject.SetActive(true);
         _currentAmmoImg = index;
     }
 
-    public void DisplayNewWave(string value, int enemies)
+    private void DisplayWave()
     {
         _waveText.gameObject.SetActive(true);
-        _waveText.text = value;
+
+        if (GameManager.currentWave == GameManager.maxWaves)
+        {
+            StartCoroutine(EnableBossUI());
+            _waveText.text = "Final Wave";
+        }
+        else
+            _waveText.text = "Wave " + GameManager.currentWave;
+
         StartTextAnimation(ref _waveText, 3f);
-        
-        _currentWaveText.text = value;
-        UpdateWaveEnemies(enemies, enemies);
+        _currentWaveText.text = "Wave " + GameManager.currentWave;
     }
 
-    public void UpdateWaveEnemies(int value, int maxValue)
+    private void UpdateWaveEnemies()
     {
-        _currentEnemiesText.text = "Enemies: " + value + "/" + maxValue;
+        _currentEnemiesText.text = "Enemies: " + GameManager.currentEnemies + "/" + GameManager.maxEnemies;
     }
 
-    public void EnableBossUI()
+    private void UpdateScore()
     {
+        _scoreText.text = "Score: " + _score;
+    }
+
+    private IEnumerator EnableBossUI()
+    {
+        yield return new WaitForSeconds(3f);
         _bossLifeMask.transform.parent.gameObject.SetActive(true);
     }
 
@@ -225,10 +235,7 @@ public class UIManager : MonoBehaviour
         _bossLifeMask.fillAmount = life;
 
         if (life == 0f)
-        {
-            GameOver(true);
             _bossLifeMask.transform.parent.gameObject.SetActive(false);
-        }
     }
 
     ////////////////////////////////
@@ -238,7 +245,7 @@ public class UIManager : MonoBehaviour
     private void EnablePauseMenu()
     {
         if(!_pauseMenu.activeSelf)
-            PlayAudio(1);
+            _uiAudioPlayer.PlayOneShot(_uiSounds[1], 1f);
         _pauseMenu.SetActive(!_pauseMenu.activeSelf);
     }
 
@@ -303,23 +310,20 @@ public class UIManager : MonoBehaviour
     }
 
     ////////////////////////////////
-    //AUDIO/////////////////////////
-    ////////////////////////////////
-
-    void PlayAudio(int index)
-    {
-        if (index < _uiSounds.Length && index >= 0)
-        {
-            _uiAudioPlayer.PlayOneShot(_uiSounds[index]);
-        }
-    }
-
-    ////////////////////////////////
     //ON DESTROY////////////////////
     ////////////////////////////////
 
     private void OnDestroy()
     {
+        Thrusters.OnThrusterUsage -= UpdateEnergyUIs;
+        FinalBoss.OnBossDamage -= UpdateBossLife;
         GameManager.OnGamePause -= EnablePauseMenu;
+        GameManager.OnNewWave -= DisplayWave;
+        GameManager.OnNewWave -= UpdateWaveEnemies;
+        GameManager.OnGameOver -= GameOver;
+        Enemy.OnEnemyDestroyed -= UpdateEnemyProperties;
+        Player.OnPlayerShot -= UpdateAmmo;
+        Player.OnPlayerSpecialShot -= UpdateCurrentShot;
+        Player.OnPlayerlives -= UpdateLives;
     }
 }

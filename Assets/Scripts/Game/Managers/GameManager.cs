@@ -7,46 +7,33 @@ using System;
 public class GameManager : MonoBehaviour
 {
     public static Action OnGamePause;
+    public static Action OnNewWave;
+    public static Action<bool> OnGameOver;
+    public static bool gamePaused;
+    public static int currentWave, maxWaves, currentEnemies, maxEnemies;
 
     private bool _gameOver;
 
     [SerializeField]
     private int _maxWaves;
-    private int _currentWave;
 
     [SerializeField]
     private int _enemiesPerWave;
-    private int _currentEnemies;
-
-    [SerializeField]
-    private float _delayToSpawnEnemy;
-    private float _currentDelay;
-    [SerializeField][Range(0f,1f)]
-    private float _reduceDelayPercentage;
-
-    private UIManager _uiManager;
-    private SpawnManager _spawnManager;
 
     private void Start()
     {
-        _currentDelay = _delayToSpawnEnemy;
-        OnGamePause = () =>
+        maxWaves = _maxWaves;
+        OnGamePause += () =>
         {
+            gamePaused = !gamePaused;
             Time.timeScale = Time.timeScale == 1 ? 0 : 1;
             AudioListener.pause = !AudioListener.pause;
         };
-        _uiManager = GameObject.Find("Canvas").GetComponent<UIManager>();
-        _spawnManager = GameObject.Find("Spawn_Manager").GetComponent<SpawnManager>();
 
-        if (_uiManager is null)
-        {
-            Debug.LogError("UI Manager is NULL");
-        }
+        OnGameOver += (value) => _gameOver = true;
 
-        if(_spawnManager is null)
-        {
-            Debug.LogError("Spawn Manager is NULL");
-        }
+        Player.OnPlayerlives += IsGameOver;
+        Enemy.OnEnemyDestroyed += EnemyDestroyed;
     }
 
     // Update is called once per frame
@@ -71,64 +58,59 @@ public class GameManager : MonoBehaviour
 
     public void StartGame()
     {
-        StartCoroutine(NextWave());
+        NextWave();
     }
 
-    public IEnumerator NextWave()
+    private void NextWave()
     {
-        _currentWave++;
+        currentWave++;
 
-        if(_currentWave == _maxWaves)
-        {
-            _currentEnemies = 1;
-            _uiManager.DisplayNewWave("Final Wave", _currentEnemies);
-            yield return new WaitForSeconds(3f);
-            _uiManager.EnableBossUI();
-            _spawnManager.SpawnNewWave(_currentEnemies, 0f, true);
-        }
+        if(currentWave == maxWaves)
+            currentEnemies = 1;
         else
-        {
-            _currentEnemies = _enemiesPerWave * _currentWave;
-            _uiManager.DisplayNewWave("Wave " + _currentWave, _currentEnemies);
-            yield return new WaitForSeconds(3f);
-            UpdateSpawnTime();
-            _spawnManager.SpawnNewWave(_currentEnemies, _currentDelay, false);
-        }
+            currentEnemies = _enemiesPerWave * currentWave;
+
+        maxEnemies = currentEnemies;
+
+        if (!(OnNewWave is null))
+            OnNewWave();
+    }
+    private void IsGameOver(int lives)
+    {
+        if (lives < 1 && !(OnGameOver is null))
+            OnGameOver(false);
     }
 
-    private void UpdateSpawnTime()
+    private void EnemyDestroyed(int scoreValue)
     {
-        _currentDelay -= (_currentDelay * _reduceDelayPercentage);
+        currentEnemies--;
 
-        if (_currentDelay < 0f)
-            _currentDelay = 0;
-    }
-
-    public void EnemyDestroyed()
-    {
-        _currentEnemies--;
-        if (_currentWave != _maxWaves)
-            _uiManager.UpdateWaveEnemies(_currentEnemies, _enemiesPerWave * _currentWave);
-        else
-            _uiManager.UpdateWaveEnemies(_currentEnemies, 1);
-
-        if (_currentEnemies == 0)
+        if (currentEnemies == 0)
         {
-            if(_currentWave == _maxWaves)
+            if(currentWave == maxWaves)
             {
-                //End Game
+                if (!(OnGameOver is null))
+                    OnGameOver(true);
                 return;
             }
-            StartCoroutine(NextWave());
+            NextWave();
         }
     }
 
     ////////////////////////////////
-    //ON GAME OVER//////////////////
+    //ON DESTROY////////////////////
     ////////////////////////////////
 
-    public void GameOver()
+    private void OnDestroy()
     {
-        _gameOver = true;
+        Player.OnPlayerlives -= IsGameOver;
+        Enemy.OnEnemyDestroyed -= EnemyDestroyed;
+        OnGamePause = null;
+        OnGameOver = null;
+        OnNewWave = null;
+        currentWave = 0;
+        currentEnemies = 0;
+        maxEnemies = 0;
+        gamePaused = false;
     }
 }

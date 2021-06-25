@@ -20,8 +20,6 @@ public class Asteroid : MonoBehaviour
     //Audioclips
     [SerializeField]
     private AudioClip[] _audioClips;
-    //AudioSource
-    private AudioSource _properAudioSource;
 
 
     // Start is called before the first frame update
@@ -33,7 +31,6 @@ public class Asteroid : MonoBehaviour
         _gameManager = GameObject.Find("Game_Manager").GetComponent<GameManager>();
         _animator = GetComponent<Animator>();
         _player = GameObject.Find("Player").GetComponent<Player>();
-        _properAudioSource = GetComponent<AudioSource>();
 
         if (_gameManager is null)
         {
@@ -48,11 +45,6 @@ public class Asteroid : MonoBehaviour
         if (_player is null)
         {
             Debug.LogError("The player is NULL");
-        }
-
-        if (_properAudioSource is null)
-        {
-            Debug.LogError("AudioSource is NULL");
         }
     }
 
@@ -102,24 +94,10 @@ public class Asteroid : MonoBehaviour
     void OnAsteroidDestruction()
     {
         //PLAY EXPLOSION AUDIO
-        PlayAudio(0);
+        AudioManager.audioSource.PlayOneShot(_audioClips[0], 1f);
         _isAsteroidDestroyed = true;
         _gameManager.StartGame();
         _animator.SetTrigger("OnAsteroidBoom");
         Destroy(gameObject, 1.185f);
     }
-
-    ////////////////////////////////
-    //AUDIO/////////////////////////
-    ////////////////////////////////
-
-    void PlayAudio(int index)
-    {
-        if (index < _audioClips.Length && index >= 0)
-        {
-            _properAudioSource.clip = _audioClips[index];
-            _properAudioSource.Play();
-        }
-    }
-
 }

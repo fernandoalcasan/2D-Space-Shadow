@@ -91,6 +91,6 @@ public class ForwardEnemy : Enemy
         Instantiate(_smartShot, transform.position, inverseRot);
 
         //Shot AUDIO
-        PlayAudio(1);
+        AudioManager.audioSource.PlayOneShot(_audioClips[1], 1f);
     }
 }

@@ -41,7 +41,7 @@ public class FinalBoss : Enemy
 
     public override void Update()
     {
-        if(!_shooting)
+        if(!_shooting && !IsDead)
             transform.Rotate(_degPerSecond * Time.deltaTime * Vector3.forward, Space.World);
     }
 
@@ -57,7 +57,7 @@ public class FinalBoss : Enemy
         Instantiate(shot, transform.position, transform.rotation);
 
         //Shot AUDIO
-        PlayAudio(1);
+        AudioManager.audioSource.PlayOneShot(_audioClips[1], .5f);
     }
 
     private void DisplayPortals()
@@ -115,7 +115,7 @@ public class FinalBoss : Enemy
     {
         if (other.CompareTag("Player"))
         {
-            if(!(OnBossDamage is null))
+            if (!(OnBossDamage is null))
             {
                 float currentLife = (_lives - 1) / _maxLives;
                 OnBossDamage(currentLife);
@@ -125,6 +125,7 @@ public class FinalBoss : Enemy
         }
         else if (other.CompareTag("PlayerShot"))
         {
+            AudioManager.audioSource.PlayOneShot(_audioClips[2], 0.2f);
             if (!(OnBossDamage is null))
             {
                 float currentLife = (_lives - 1) / _maxLives;

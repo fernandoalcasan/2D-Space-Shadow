@@ -12,8 +12,8 @@ public class Powerup : MonoBehaviour
     private float _speed = 3f;
 
     //Space Limits
-    private float _xLimit = 10f;
-    private float _yLimit = 6.5f;
+    private readonly float _xLimit = 10f;
+    private readonly float _yLimit = 6.5f;
 
     //Power-up IDs
     [SerializeField]
@@ -22,10 +22,12 @@ public class Powerup : MonoBehaviour
     //Collection audio
     [SerializeField]
     private AudioClip _collectedAudio;
+    [SerializeField]
+    private AudioClip _destroyedAudio;
 
     private void OnEnable()
     {
-        Player.onAttract += ChangeAttraction;
+        Player.OnAttraction += ChangeAttraction;
     }
 
     void Start()
@@ -50,9 +52,9 @@ public class Powerup : MonoBehaviour
     //PROPERTIES////////////////////
     ////////////////////////////////
 
-    private void ChangeAttraction()
+    private void ChangeAttraction(bool attraction)
     {
-        _attracted = !_attracted;
+        _attracted = attraction;
     }
 
     ////////////////////////////////
@@ -80,12 +82,12 @@ public class Powerup : MonoBehaviour
 
     private void OnDestroy()
     {
-        Player.onAttract -= ChangeAttraction;
+        Player.OnAttraction -= ChangeAttraction;
     }
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        if(other.tag == "Player")
+        if(other.CompareTag("Player"))
         {
             Player player = other.transform.GetComponent<Player>();
 
@@ -120,6 +122,12 @@ public class Powerup : MonoBehaviour
                 }
             }
             AudioSource.PlayClipAtPoint(_collectedAudio, Camera.main.transform.position);
+            Destroy(gameObject);
+        }
+        else if (other.CompareTag("EnemyShot"))
+        {
+            AudioSource.PlayClipAtPoint(_destroyedAudio, Camera.main.transform.position);
+            Destroy(other.gameObject);
             Destroy(gameObject);
         }
     }
