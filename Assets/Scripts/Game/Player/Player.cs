@@ -124,6 +124,7 @@ public class Player : MonoBehaviour
     {
         float hInput = Input.GetAxis("Horizontal");
         float vInput = Input.GetAxis("Vertical");
+        _animator.SetFloat("HorMovement", hInput);
 
         // get direction of movement
         Vector3 dir = new Vector3(hInput, vInput, 0);
