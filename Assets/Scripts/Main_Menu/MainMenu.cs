@@ -33,4 +33,9 @@ public class MainMenu : MonoBehaviour
         _controls.SetActive(!_controls.activeSelf);
         EventSystem.current.SetSelectedGameObject(null);
     }
+
+    public void ExitGame()
+    {
+        Application.Quit();
+    }
 }
