@@ -8,6 +8,8 @@ public class MainMenu : MonoBehaviour
 {
     [SerializeField]
     private GameObject _credits;
+    [SerializeField]
+    private GameObject _controls;
 
     public void LoadScene(int index)
     {
@@ -23,6 +25,12 @@ public class MainMenu : MonoBehaviour
     public void DisplayCredits()
     {
         _credits.SetActive(!_credits.activeSelf);
+        EventSystem.current.SetSelectedGameObject(null);
+    }
+    
+    public void DisplayControls()
+    {
+        _controls.SetActive(!_controls.activeSelf);
         EventSystem.current.SetSelectedGameObject(null);
     }
 }
