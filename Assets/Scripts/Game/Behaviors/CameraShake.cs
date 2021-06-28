@@ -53,6 +53,7 @@ public class CameraShake : MonoBehaviour
         }
 
         StartCoroutine(ShakeCamera());
+        _playerLives = lives;
     }
 
     private IEnumerator ShakeCamera()
